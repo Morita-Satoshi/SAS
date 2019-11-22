@@ -22,3 +22,7 @@ def getAsagaoImage(event, context):
         "event": event
     }
     """
+
+
+def scan(resource):
+    table = resource.Table()

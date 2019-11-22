@@ -62,42 +62,49 @@ provider:
 
 functions:
   GetStudent:
-    handler: getStudent.getStudents
+    handler: src/getStudent.getStudents
     events:
       - http:
           path: students/{studentId}
           method: get
           cors: true
   PostStudent:
-    handler: postStudent.postStudent
+    handler: src/postStudent.postStudent
     events:
       - http:
           path: students/{studentId}
           method: post
           cors: true
   GetPlantImage:
-    handler: getAsagaoImage.getAsagaoImage
+    handler: src/getAsagaoImage.getAsagaoImage
     events:
       - http:
           path: students/{studentId}/plants/{plantId}/images
           method: get
           cors: true
   PostPlantImage:
-    handler: postAsagaoImage.postAsagaoImage
+    handler: src/postAsagaoImage.postAsagaoImage
     events:
       - http:
           path: students/{studentId}/plants/{plantId}/images
           method: post
           cors: true
   GetPlantInformation:
-    handler: getPlantInformation.getPlantInformation
+    handler: src/getPlantInformation.getPlantInformation
     events:
       - http:
           path: students/{studentId}/plants/{plantId}
           method: get
           cors: true
   PostPlantInformation:
-    handler: postPlantInformation.postPlantInformation
+    handler: src/postPlantInformation.postPlantInformation
+    events:
+      - http:
+          path: students/{studentId}/plants/{plantId}
+          method: post
+          cors: true
+  PostToWaterTopic:
+    handler: src/postToWaterTopic.postToWaterTopic
     events:
       - http:
           path: students/{studentId}/plants/{plantId}

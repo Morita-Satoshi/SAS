@@ -1,10 +1,18 @@
+import boto3
 import json
 
-
 def getPlantInformation(event, context):
+   
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('Asagao-growth')
+    
+    response = table.scan()
+    print(response['Count'])
+    print(response['Items'])
     body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "input": event
+        "message": "success",
+        "input": event,
+        "items":response['Items']
     }
 
     response = {
