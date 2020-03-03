@@ -1,0 +1,89 @@
+@startuml
+
+hide circle
+hide empty members
+hide method
+
+!definelong req(name,txt,label)
+class "name" as label <<requirement>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong freq(name,txt,label)
+class "name" as label <<functionalRequirement>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong dcnstr(name,txt,label)
+class "name" as label <<designConstraint>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong testcase(name,txt,label)
+class "name" as label <<testCase>> {
+Text=txt
+}
+
+!enddefinelong
+!define nest(x,y) x +-- y
+!define derive(x,y) x <.. y : <<deriveReqt>>
+!define refine(x,y) x <.. y : <<refine>>
+!define derivel(x,y) x <.. y : <<deriveReqt>> link
+
+!define REQ4 成長を実感/加速させる
+!define REQ5 自分の成長した時がわかる
+!define REQ6 過去の記録を保存する
+!define REQ7 6年間のデータを保存する(仮)
+
+!define REQ8 フォームを見比べて確認できる
+!define REQ9 コーチと動画をみて確認したい
+!define REQ10 動画を横に並べて比較できる
+!define REQ11 30秒以内にアップロード/ダウンロードが完了すること(仮)
+
+!define REQ12 家で詳しくフォームを見比べて確認したい
+!define REQ13 骨格を抽出して詳細に比較できる
+!define REQ14 1h以内に骨格を抽出版の動画の作成が完了していること(仮)
+
+!define REQ3_6 他の人のフォームと比べることができる
+!define REQ3_7 プロのフォームと比べることができる
+!define REQ3_8 自分の昔のフォームと比べることができる
+
+title こどものぼーる
+
+package "req 評価" <<Frame>> {
+    req(REQ4,,A4)
+    req(REQ5,,A5)
+    freq(REQ6,,A6)
+    freq(REQ7,,A7)
+    freq(REQ8,,A8)
+    req(REQ9,,A9)
+    freq(REQ10,,A10)
+    freq(REQ11,,A11)
+    req(REQ12,,A12)
+    freq(REQ13,,A13)
+    freq(REQ14,,A14)
+
+    freq(REQ3_6,,A3_6)
+    freq(REQ3_7,,A3_7)
+    freq(REQ3_8,,A3_8)
+}
+derive(A4,A5)
+derive(A4,A8)
+derive(A8,A9)
+derive(A9,A10)
+derive(A9,A11)
+derive(A8,A12)
+derive(A12,A13)
+derive(A12,A14)
+derive(A5,A6)
+derive(A6,A7)
+
+derive(A4,A3_6)
+derive(A3_6,A3_7)
+derive(A3_6,A3_8)
+
+
+@enduml

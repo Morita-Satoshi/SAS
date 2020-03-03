@@ -1,0 +1,71 @@
+
+@startuml
+
+hide circle
+hide empty members
+hide method
+
+!definelong req(name,txt,label)
+class "name" as label <<requirement>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong freq(name,txt,label)
+class "name" as label <<functionalRequirement>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong dcnstr(name,txt,label)
+class "name" as label <<designConstraint>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong testcase(name,txt,label)
+class "name" as label <<testCase>> {
+Text=txt
+}
+
+!enddefinelong
+!define nest(x,y) x +-- y
+!define derive(x,y) x <.. y : <<deriveReqt>>
+!define refine(x,y) x <.. y : <<refine>>
+!define derivel(x,y) x <.. y : <<deriveReqt>> link
+
+!define REQ2 自分を客観ししてみることができる
+!define REQ2_1 自分のフォームを日々比べる
+!define REQ2_2 自分がお手本とする人と比べることができる
+!define REQ2_3 自分の動画をアップロードできる
+!define REQ2_3_1 アップロード時間に解説動画を再生する
+!define REQ2_4 野球のフォームをはっきりと確認することができる
+!define REQ2_5 240fps以上のフレームレートのカメラ
+!define REQ2_6 子供が飽きない時間での処理
+!define REQ2_7 お手本を選択できる
+
+title こどものぼーる
+
+package "req モニタリング" <<Frame>> {
+    req(REQ2,,A2)
+    freq(REQ2_1,,A2_1)
+    freq(REQ2_2,,A2_2)
+    freq(REQ2_3,,A2_3)
+    freq(REQ2_3_1,,A2_3_1)
+    req(REQ2_4,,A2_4)
+    dcnstr(REQ2_5,,A2_5)
+    req(REQ2_6,今回は5分を仮に置き検証中,A2_6)
+    freq(REQ2_7,,A2_7)
+}
+derive(A2,A2_1)
+derive(A2,A2_2)
+derive(A2_1,A2_3)
+derive(A2_2,A2_3)
+derive(A2_1,A2_4)
+derive(A2_2,A2_4)
+derive(A2_3,A2_3_1)
+derive(A2_4,A2_5)
+derive(A2_3,A2_6)
+derive(A2_2,A2_7)
+
+@enduml

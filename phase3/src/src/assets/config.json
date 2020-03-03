@@ -1,0 +1,10 @@
+{
+  "PoolId": "ap-northeast-1_O54jSXhjZ",
+  "ClientId": "171g0itb1krfv1f75n1ngaui6j",
+  "apiStage": "v1",
+  "cookieRememberDay": 10,
+  "api": {
+    "baseUrl": "https://13bg49njm7.execute-api.ap-northeast-1.amazonaws.com/dev",
+    "maxIntervalSec": 10800
+  }
+}

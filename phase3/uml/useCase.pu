@@ -1,0 +1,25 @@
+@startuml 子供のぼーる
+left to right direction
+skinparam packageStyle rectangle
+actor :子供: as child 
+actor :親: as parent
+
+
+rectangle "こどものぼーる"{
+  usecase フォームを比較 as Compare
+  usecase 動画をアップロード as Upload
+  usecase 記録を閲覧 as Check
+
+  child -- (Upload)
+  child -- (Compare)
+  (Compare)  <..(過去の自分と比較):include
+  (Compare) <..(プロと比較):include
+  (Compare) <..(アドバイスシートと比較):include
+  child -- (Check)
+  (Check) -- parent
+  (Check) ..> (自己採点を登録する):extend
+  (アドバイスを送る) -- parent
+  (アドバイスを送る) -- parent
+  (アドバイスを送る) -- parent
+}
+@enduml

@@ -1,0 +1,65 @@
+@startuml
+
+hide circle
+hide empty members
+hide method
+
+!definelong req(name,txt,label)
+class "name" as label <<requirement>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong freq(name,txt,label)
+class "name" as label <<functionalRequirement>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong dcnstr(name,txt,label)
+class "name" as label <<designConstraint>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong dcnstr(name,txt,label)
+class "name" as label <<designConstraint>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong testcase(name,txt,label)
+class "name" as label <<testCase>> {
+Text=txt
+}
+
+!enddefinelong
+!define nest(x,y) x +-- y
+!define derive(x,y) x <.. y : <<deriveReqt>>
+!define refine(x,y) x <.. y : <<refine>>
+!define derivel(x,y) x <.. y : <<deriveReqt>> link
+
+
+title こどものぼーる
+!define REQ1 野球を通じて子供自身の自主的な取り組みを促し、成長を実感/加速できる仕組みを提供する
+
+!define REQ2 自主的な取り組みを促す
+!define REQ3 成長を実感/加速できる
+
+
+package "req サービス要求" <<Frame>> {
+    req(REQ1,,A1)
+
+    req(REQ2,,A2)
+
+    req(REQ3,,A3)
+
+}
+
+nest(A1,A2)
+nest(A1,A3)
+
+
+
+
+@enduml

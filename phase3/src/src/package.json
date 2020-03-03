@@ -1,0 +1,27 @@
+{
+  "name": "noboru",
+  "version": "1.0.0",
+  "description": "My excellent Nuxt.js project",
+  "author": "Satoshi-Morita",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "test": "jest"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.630.0",
+    "axios": "^0.19.2",
+    "fs": "0.0.1-security",
+    "nuxt": "^2.0.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.0.0",
+    "@vue/test-utils": "^1.0.0-beta.27",
+    "babel-jest": "^24.1.0",
+    "jest": "^24.1.0",
+    "vue-jest": "^4.0.0-0"
+  }
+}
