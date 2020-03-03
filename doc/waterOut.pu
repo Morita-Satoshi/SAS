@@ -1,0 +1,14 @@
+
+@startuml
+participant "RaspberryPi" as RaspberryPi
+title "モーター制御に関するシーケンス"
+
+[-> RaspberryPi : APIの返り値
+activate RaspberryPi
+alt flagがtrue
+    RaspberryPi ->> ポンプ:GPIOに1出力
+else
+    RaspberryPi ->> ポンプ:GPIOに0出力
+end
+deactivate RaspberryPi
+@enduml

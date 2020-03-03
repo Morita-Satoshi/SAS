@@ -1,0 +1,21 @@
+@startuml
+participant "RaspberryPi" as RaspberryPi
+participant "API" as API
+title "水やり決定に関するシーケンス"
+
+[-> RaspberryPi : 
+activate RaspberryPi
+alt 水sensor < 〇
+    RaspberryPi -> API:isWater(true)
+    activate API 
+    API -> SNS
+    activate SNS 
+    SNS -> SNS:ユーザーへのメール通知
+    SNS --> API:
+    deactivate SNS 
+
+    API --> RaspberryPi:レスポンス(水やりtrue)
+    deactivate API 
+end
+deactivate RaspberryPi
+@enduml

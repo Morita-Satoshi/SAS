@@ -1,0 +1,63 @@
+@startuml
+
+hide circle
+hide empty members
+hide method
+
+!define REQ1 綺麗な朝顔を咲かせて夏休みの課題を完遂させる
+!define REQ2 自動で水を上げる
+!define REQ3 自動で肥料を上げる
+!define REQ5 あさがおの状態をログで確認できる
+
+!definelong req(name,txt,label)
+class "name" as label <<requirement>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong freq(name,txt,label)
+class "name" as label <<functionalRequirement>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong dcnstr(name,txt,label)
+class "name" as label <<designConstraint>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong dcnstr(name,txt,label)
+class "name" as label <<designConstraint>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong testcase(name,txt,label)
+class "name" as label <<testCase>> {
+Text=txt
+}
+
+!enddefinelong
+!define nest(x,y) x +-- y
+!define derive(x,y) x <.. y : <<deriveReqt>>
+!define refine(x,y) x <.. y : <<refine>>
+!define derivel(x,y) x <.. y : <<deriveReqt>> link
+
+
+title 自動水やりシステム要求図
+
+package "req サービス要求" <<Frame>> {
+    req(REQ1,子供の悲しむ顔をみたくない...,A1)
+    req(REQ2,気温等、環境の変化に対応する,A2)
+    req(REQ3,気温等、環境の変化に対応する,A3)
+    req(REQ5,,A5)
+
+}
+
+nest(A1,A2)
+nest(A1,A3)
+nest(A1,A5)
+
+
+@enduml

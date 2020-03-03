@@ -1,0 +1,69 @@
+@startuml
+
+hide circle
+hide empty members
+hide method
+
+!define REQ1 自動で水をあさがおにあげる 
+!define REQ2 水を上げるタイミングを判定する
+!define REQ3 水をあげる
+!define REQ4 あさがおの土壌状態を確認する
+!define REQ6 画像をクラウドにアップロードする
+!define REQ7 センサデータをクラウドにアップロードする
+
+!definelong req(name,txt,label)
+class "name" as label <<requirement>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong freq(name,txt,label)
+class "name" as label <<functionalRequirement>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong dcnstr(name,txt,label)
+class "name" as label <<designConstraint>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong dcnstr(name,txt,label)
+class "name" as label <<designConstraint>> {
+Text=txt
+}
+!enddefinelong
+
+!definelong testcase(name,txt,label)
+class "name" as label <<testCase>> {
+Text=txt
+}
+
+!enddefinelong
+!define nest(x,y) x +-- y
+!define derive(x,y) x <.. y : <<deriveReqt>>
+!define refine(x,y) x <.. y : <<refine>>
+!define derivel(x,y) x <.. y : <<deriveReqt>> link
+
+
+title 自動水やりシステム要求図
+
+package "req サービス要求" <<Frame>> {
+    req(REQ1,コミュニケーションを可視化したい,A1)
+    req(REQ2,仲良しとは一定距離近寄ったら仲良しとする,A2)
+    req(REQ3,WEBブラウザを利用して確認したい,A3)
+    req(REQ4,,A4)
+    req(REQ6,,A6)
+    req(REQ7,,A7)
+
+}
+
+nest(A1,A2)
+nest(A1,A3)
+nest(A1,A4)
+
+derive(A4,A6)
+derive(A4,A7)
+
+@enduml

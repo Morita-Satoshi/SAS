@@ -1,0 +1,12 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor 子供
+actor あさがお
+rectangle 自動水やりシステム {
+  子供 -- (自動で水をあさがおに水をあげる)
+  (自動で水をあさがおに水をあげる) .> (水をあげる) : include
+  (自動で水をあさがおに水をあげる) .> (写真をとる) : include
+  (自動で水をあさがおに水をあげる) -- あさがお
+}
+@enduml
