@@ -27,6 +27,15 @@ provider:
   profile: asagao
   region: ap-northeast-1
 
+package:
+  individually: true
+  exclude:
+    - screen_src/*
+    - src_edge/*
+    - .serverless/*
+    - .vscode/*
+    - doc/*
+
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
@@ -67,35 +76,75 @@ functions:
       - http:
           path: students/{studentId}
           method: get
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
   PostStudent:
     handler: src/postStudent.postStudent
     events:
       - http:
           path: students/{studentId}
           method: post
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
   GetPlantImage:
     handler: src/getAsagaoImage.getAsagaoImage
     events:
       - http:
           path: students/{studentId}/plants/{plantId}/images
           method: get
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
   PostPlantImage:
     handler: src/postAsagaoImage.postAsagaoImage
     events:
       - http:
           path: students/{studentId}/plants/{plantId}/images
           method: post
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
   GetPlantInformation:
     handler: src/getPlantInformation.getPlantInformation
     events:
       - http:
           path: students/{studentId}/plants/{plantId}
           method: get
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
   PostPlantInformation:
     handler: src/postPlantInformation.postPlantInformation
     events:
@@ -103,13 +152,13 @@ functions:
           path: students/{studentId}/plants/{plantId}
           method: post
           cors: true
-  PostToWaterTopic:
-    handler: src/postToWaterTopic.postToWaterTopic
-    events:
-      - http:
-          path: students/{studentId}/plants/{plantId}
-          method: post
-          cors: true
+  # PostToWaterTopic:
+  #   handler: src/postToWaterTopic.postToWaterTopic
+  #   events:
+  #     - http:
+  #         path: students/{studentId}/plants/{plantId}
+  #         method: post
+  #         cors: true
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

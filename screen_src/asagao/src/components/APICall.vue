@@ -1,38 +1,51 @@
 <template>
   <div class="APIcall_container">
-    <input class="text" type="text" v-model="qu" @keyup.enter="exe" />
-    <input class="submit" type="submit" value="APIcall" @click="exe" />
+    <input class="submit" type="submit" value="更新" @click="exe" />
   </div>
 </template>
 
 <script>
 import axios from "axios";
+
 export default {
   data() {
-    return {
-      qu: ""
-    };
+    return {};
   },
   methods: {
     async exe() {
+      //$emit イベントを送出するもの
       this.$emit("loadStart");
       const { data } = await axios.get(
-        `https://wvgpmj09ce.execute-api.ap-northeast-1.amazonaws.com/dev/students/morita/plants/${this.qu}`
+        `https://wvgpmj09ce.execute-api.ap-northeast-1.amazonaws.com/dev/students/morita/plants/1`
       );
-      this.$emit("loadDone", { results: data });
+      this.$emit("loadComplete", { results: data.items });
     }
   }
 };
 </script>
 
 <style scoped>
-div {
-  border: 1px solid red;
+.APIcall_container {
+  display: flex;
+  justify-content: center;
+  height: 70px;
+  padding: 20px;
+  background-color: aquamarine;
+  box-sizing: border-box;
 }
-h2 {
-  color: red;
+.text {
+  width: 50%;
+  max-width: 300px;
+  padding: 0.5em;
+  border: none;
 }
-p {
-  color: red;
+
+.submit {
+  padding: 0.5em 2em;
+  margin-left: 10px;
+  color: #fff;
+  background-color: #42b883;
+  border: none;
+  border-radius: 20px;
 }
 </style>

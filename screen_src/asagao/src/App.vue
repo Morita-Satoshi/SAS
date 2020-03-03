@@ -1,31 +1,22 @@
 <template>
-  <div id="app">
-    <img
-      alt="today"
-      src="https://asagao-automation.s3-ap-northeast-1.amazonaws.com/images/download.jpg"
-    />
-    <HelloWorld msg="今日の朝顔の様子です！" />
-    <APIcall
-      class="APIcall"
-      @loadStart="onLoadStart"
-      @loadComplete="onLoadComplete"
-    />
+  <div class="root">
+    <Search class="search" @loadStart="onLoadStart" @loadComplete="onLoadComplete" />
+    <Result :items="items" :loadProgress="loadProgress" />
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
 import APIcall from "./components/APICall.vue";
+import Result from "./components/Result.vue";
 
 export default {
-  name: "app",
   data() {
     return {
       items: [],
       loadProgress: false
     };
   },
-  method: {
+  methods: {
     onLoadStart() {
       this.loadProgress = true;
     },
@@ -35,19 +26,44 @@ export default {
     }
   },
   components: {
-    HelloWorld,
-    APIcall
+    APICall,
+    Result
   }
 };
 </script>
 
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped >
+.root {
+  padding-top: 70px;
+}
+
+.search {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 </style>
+ 
+ 
+<style>
+html {
+  font-size: 62.5%;
+}
+
+body {
+  margin: 0;
+  color: #35495e;
+}
+
+p {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+}
+</style>
+
