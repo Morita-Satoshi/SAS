@@ -2,6 +2,10 @@
 
 > My excellent Nuxt.js project
 
+## environment Setup
+### VScodeでGitBashを利用する
+[参考](https://qiita.com/psychoroid/items/63cc0ece70fce0f0cfc0)
+
 ## Build Setup
 
 ``` bash
