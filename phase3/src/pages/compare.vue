@@ -1,18 +1,12 @@
 <template>
   <v-layout>
     <v-flex class="text-center">
-    <div>
-      <button type="button" class="v-btn vv-btn--contained v-size--large theme-light" @click="changeImage">{{message}}</button>
-    </div>
-  <div class="row align">
-    <div class="col-xs-6 col-md-6">
-      <img :src="displayImages[0].org" class="resize_image left_image" v-show="displayBornImage==false" aspect-ratio="1">
-      <img :src="displayImages[1].org" class="resize_image left_image" v-show="displayBornImage==true" aspect-ratio="1">
-      <img :src="displayImages[0].model" class="resize_image right_image" v-show="displayBornImage==false" aspect-ratio="1">
-      <img :src="displayImages[1].model" class="resize_image right_image" v-show="displayBornImage==true" aspect-ratio="1">
-    </div>
-  </div>
-      </v-flex>
+      <div>
+        <button type="button" v-for="item in sample" :key="item.name" class="v-btn vv-btn--contained v-size--large theme-light" @click="playMovie(item)">{{item.name + message.playMovie}}</button>
+      </div>
+      <video :src="moviePath" width="320" height="240" preload="none" controls>
+      </video>  
+    </v-flex>
   </v-layout>
 </template>
 
@@ -20,13 +14,32 @@
 export default {
   data() {
     return {
-      message: "骨にする",
-      displayImages: [
-        { org: '/kids_before.png', model: '/morita_before.png' },
-        { org: '/kids_after.png' , model: '/morita_after.png' },
+      debugFlag: true,
+      moviePath: '',
+      message: {
+        playMovie: '動画再生',
+      },
+      sample: [
+        { name: 'Eguchi' , s3BucketPath: 'eguchi',  localpath: '/eguchi/1583215200.mov'  },
+        { name: 'Morita' , s3BucketPath: 'morita',  localpath: '/morita/1583215200.mov'  },
+        { name: 'Yaguchi', s3BucketPath: 'yaguchi', localpath: '/yaguchi/1583215200.mov' },
       ],
-      displayBornImage: false,
+      awsS3Info: {
+        bucket: 'sas-noboru-upload',
+        region: 'ap-northeast-1',
+      },
+      s3BucketList: {},
+      s3MovieList: {},
+      movieFormat: '.mov',
     }
+  },
+  created() {
+    console.log('created');
+    var self = this;
+    self.s3BucketList = {};
+    self.s3MovieList = {};
+    self.getCredentials();
+    self.getS3BucketList();
   },
   computed: {
   },
@@ -34,9 +47,91 @@ export default {
     compareImage(e) {
       this.$store.commit("compare/compare");
     },
-    changeImage: function() {
-      this.displayBornImage = !this.displayBornImage;
-    }
+    // LoginUser情報取得
+    getLoginUser: function() {
+      console.log('getLoginUser');
+    },
+    // Credential情報取得
+    getCredentials: function() {
+      console.log('getCredentials');
+      var self = this;
+      var AWS = require('aws-sdk');
+      const store = window.$nuxt.$store;
+      AWS.config.region = self.awsS3Info.region;
+      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: store.getters['user/identityID']
+      });
+    },
+    getS3Instance: function() {
+      var self = this;
+      return new AWS.S3({
+        params: {
+          Bucket: self.awsS3Info.bucket,
+          Region: self.awsS3Info.region,
+        }
+      });
+    },
+    // S3バケットの中身を取得
+    getS3BucketList: function() {
+      console.log('getS3BucketList');
+      var self = this;
+      var s3 = self.getS3Instance();
+      s3.listObjects(function(err, data) {
+        if (err) {
+          console.log('listObjects err: ' + err);
+        }
+        else {
+          console.log('listObjects success: ' + JSON.stringify(data.Contents));
+          self.s3BucketList = data.Contents;
+          data.Contents.forEach(item => {
+            var key = item.Key;
+            if (key.toLowerCase().indexOf(self.movieFormat) !== -1) {
+              self.pushMovieList(key);
+            }
+          })
+        }
+      });
+    },
+    // 動画リスト
+    pushMovieList: function(key) {
+      console.log('pushMovieList key: ' + key);
+      var self = this;
+      self.sample.forEach(item => {
+        if (key.indexOf(item.s3BucketPath) !== -1) {
+          self.s3MovieList[item.name] = key;
+        }
+      });
+      console.log('S3 Movie List: ' + JSON.stringify(self.s3MovieList));
+    },
+    // 動画取得
+    getMovie: function(item) {
+      console.log('getMovie item: ' + item);
+      var self = this;
+      console.log('key: ' + JSON.stringify(self.s3MovieList));
+      var s3 = self.getS3Instance();
+      s3.getObject({
+        Bucket: self.awsS3Info.bucket,
+        Key: self.s3MovieList[item],
+      },
+      function(err, data) {
+        if (err) {
+          console.log('getObject err: ' + err);
+        }
+        else {
+          console.log('getObject success: ' + JSON.stringify(data));
+        }
+      });
+    },
+    // 動画再生
+    playMovie: function(item) {
+      console.log('playMovie item: ' + JSON.stringify(item));
+      var self = this;
+      if (self.debugFlag) {
+        self.moviePath = item.localpath;
+      }
+      else {
+      }
+    },
   }
 };
 </script>
