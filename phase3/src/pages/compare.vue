@@ -14,7 +14,7 @@
 export default {
   data() {
     return {
-      debugFlag: true,
+      debugFlag: false,
       moviePath: '',
       message: {
         playMovie: '動画再生',
@@ -30,7 +30,7 @@ export default {
       },
       s3BucketList: {},
       s3MovieList: {},
-      movieFormat: '.mov',
+      movieFormat: '.mov',  // 動画ファイル拡張子 -> 小文字で定義すること
     }
   },
   created() {
@@ -85,6 +85,7 @@ export default {
           self.s3BucketList = data.Contents;
           data.Contents.forEach(item => {
             var key = item.Key;
+            console.log('key: ' + key);
             if (key.toLowerCase().indexOf(self.movieFormat) !== -1) {
               self.pushMovieList(key);
             }
@@ -105,22 +106,40 @@ export default {
     },
     // 動画取得
     getMovie: function(item) {
-      console.log('getMovie item: ' + item);
+      console.log('getMovie item: ' + JSON.stringify(item));
       var self = this;
       console.log('key: ' + JSON.stringify(self.s3MovieList));
+
       var s3 = self.getS3Instance();
+      const signedUrl = s3.getSignedUrl('getObject', {
+        Bucket: self.awsS3Info.bucket,
+        Key: self.s3MovieList[item.name],
+        Expires: 60,
+      }, (err, signedUrl) => {
+        if (err) {
+          console.log('getSignedUrl err: ' + err);
+        }
+        else {
+          console.log('getSignedUrl success: ' + signedUrl);
+          self.moviePath = signedUrl;
+        }
+      });
+      /*
       s3.getObject({
         Bucket: self.awsS3Info.bucket,
-        Key: self.s3MovieList[item],
+        Key: self.s3MovieList[item.name],
       },
       function(err, data) {
         if (err) {
           console.log('getObject err: ' + err);
         }
         else {
-          console.log('getObject success: ' + JSON.stringify(data));
+          console.log('getObject success: ' + JSON.stringify(data.Body));
+          self.moviePath = data.Body.toString('base64');
+          console.log('moviePath: ' + self.moviePath);
         }
       });
+      */
     },
     // 動画再生
     playMovie: function(item) {
@@ -130,6 +149,7 @@ export default {
         self.moviePath = item.localpath;
       }
       else {
+        self.getMovie(item);
       }
     },
   }
