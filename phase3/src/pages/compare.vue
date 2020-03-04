@@ -14,15 +14,14 @@
 export default {
   data() {
     return {
-      debugFlag: false,
       moviePath: '',
       message: {
         playMovie: '動画再生',
       },
       sample: [
-        { name: 'Eguchi' , s3BucketPath: 'eguchi',  localpath: '/eguchi/1583215200.mov'  },
-        { name: 'Morita' , s3BucketPath: 'morita',  localpath: '/morita/1583215200.mov'  },
-        { name: 'Yaguchi', s3BucketPath: 'yaguchi', localpath: '/yaguchi/1583215200.mov' },
+        { name: 'Eguchi' , s3BucketPath: 'eguchi'  },
+        { name: 'Morita' , s3BucketPath: 'morita'  },
+        { name: 'Yaguchi', s3BucketPath: 'yaguchi' },
       ],
       awsS3Info: {
         bucket: 'sas-noboru-upload',
@@ -124,33 +123,12 @@ export default {
           self.moviePath = signedUrl;
         }
       });
-      /*
-      s3.getObject({
-        Bucket: self.awsS3Info.bucket,
-        Key: self.s3MovieList[item.name],
-      },
-      function(err, data) {
-        if (err) {
-          console.log('getObject err: ' + err);
-        }
-        else {
-          console.log('getObject success: ' + JSON.stringify(data.Body));
-          self.moviePath = data.Body.toString('base64');
-          console.log('moviePath: ' + self.moviePath);
-        }
-      });
-      */
     },
     // 動画再生
     playMovie: function(item) {
       console.log('playMovie item: ' + JSON.stringify(item));
       var self = this;
-      if (self.debugFlag) {
-        self.moviePath = item.localpath;
-      }
-      else {
-        self.getMovie(item);
-      }
+      self.getMovie(item);
     },
   }
 };
