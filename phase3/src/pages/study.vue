@@ -7,19 +7,19 @@
     <div id="tabs" class="container">
       <div class="tabs">
           <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">
-              <img :src = "displayImages[0].tab">
+              <img :src = "displayImages[0].tab" width="100" height="120">
           </a>
           <a v-on:click="activetab=2" v-bind:class="[ activetab === 2 ? 'active' : '' ]">
-              <img :src = "displayImages[1].tab">
+              <img :src = "displayImages[1].tab" width="100" height="120">
           </a>
           <a v-on:click="activetab=3" v-bind:class="[ activetab === 3 ? 'active' : '' ]">
-              <img :src = "displayImages[2].tab">
+              <img :src = "displayImages[2].tab" width="100" height="120">
           </a>
           <a v-on:click="activetab=4" v-bind:class="[ activetab === 4 ? 'active' : '' ]">
-              <img :src = "displayImages[3].tab">
+              <img :src = "displayImages[3].tab" width="100" height="120">
           </a>
           <a v-on:click="activetab=5" v-bind:class="[ activetab === 5 ? 'active' : '' ]">
-              <img :src = "displayImages[4].tab">
+              <img :src = "displayImages[4].tab" width="100" height="120">
           </a>
       </div>
       <div class="content">
