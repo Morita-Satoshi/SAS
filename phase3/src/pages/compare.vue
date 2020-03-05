@@ -1,10 +1,27 @@
 <template>
   <v-layout>
     <v-flex class="text-center">
+      <!--
       <div>
-        <button type="button" v-for="item in sample" :key="item.name" class="v-btn vv-btn--contained v-size--large theme-light" @click="playMovie(item)">{{item.name + message.playMovie}}</button>
+        <v-card color="blue" dark>
+          <v-card-text>
+            {{message.selectMovie1}}
+            <v-sheet color="rgba(0, 0, 0, .12)">
+            </v-sheet>
+          </v-card-text>
+        </v-card>
+        <v-card width="160" height="120" v-for="item in sample" :key="item.name">{{item.name}}
+        </v-card>
       </div>
-      <video :src="moviePath" width="320" height="240" preload="none" controls>
+      -->
+      <div>
+        <button type="button" v-for="item in sample" :key="item.name" class="v-btn vv-btn--contained v-size--large theme-light" @click="getMovie(item)">{{item.name + message.getMovie}}</button>
+        <button type="button" class="v-btn vv-btn--contained v-size--large theme-light" @click="playMovie">動画再生</button>
+        <button type="button" class="v-btn vv-btn--contained v-size--large theme-light" @click="pauseMovie">動画停止</button>
+      </div>
+      <video id="video1" :src="movieData.url1" width="320" height="240" preload="none" controls>
+      </video>
+      <video id="video2" :src="movieData.url2" width="320" height="240" preload="none" controls>
       </video>  
     </v-flex>
   </v-layout>
@@ -16,6 +33,9 @@ export default {
     return {
       moviePath: '',
       message: {
+        selectMovie1: '1つ目の動画を選んでください',
+        selectMovie2: '2つ目の動画を選んでください',
+        getMovie: '動画取得',
         playMovie: '動画再生',
       },
       sample: [
@@ -29,6 +49,11 @@ export default {
       },
       s3BucketList: {},
       s3MovieList: {},
+      movieData: {
+        url1: '',
+        url2: '',
+      },
+      counter: 0,
       movieFormat: '.mov',  // 動画ファイル拡張子 -> 小文字で定義すること
     }
   },
@@ -120,15 +145,34 @@ export default {
         }
         else {
           console.log('getSignedUrl success: ' + signedUrl);
-          self.moviePath = signedUrl;
+          if (!(self.counter % 2)) {
+            self.movieData.url1 = signedUrl;
+            self.counter++;
+          }
+          else {
+            self.movieData.url2 = signedUrl;
+            self.counter--;
+          }
         }
       });
     },
-    // 動画再生
-    playMovie: function(item) {
-      console.log('playMovie item: ' + JSON.stringify(item));
+    // 一括動画再生
+    playMovie: function() {
+      console.log('playMovie');
       var self = this;
-      self.getMovie(item);
+      var v1 = document.getElementById("video1");
+      var v2 = document.getElementById("video2");
+      v1.play();
+      v2.play();
+    },
+    // 一括動画停止
+    pauseMovie: function() {
+      console.log('pauseMovie');
+      var self = this;
+      var v1 = document.getElementById("video1");
+      var v2 = document.getElementById("video2");
+      v1.pause();
+      v2.pause();
     },
   }
 };
