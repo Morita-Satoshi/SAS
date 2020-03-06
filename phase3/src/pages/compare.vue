@@ -5,7 +5,7 @@
       <div>
         <video id="video1" class="video_size" :src="movieData[0].url" preload="none" muted playsinline controls></video>
         <div>
-          <select v-model="selected.movie1" @change="getMovie($event, 0)">
+          <select style="border: 2px solid blue" v-model="selected.movie1" @change="getMovie($event, 0)">
             <option disabled value="">{{message.selectMovie1}}</option>
             <option v-for="(item, index) in uiDisplay" :key="index" :value="item.movieName">{{item.movieName}}</option>
           </select>
@@ -16,7 +16,7 @@
       <div>
         <video id="video2" class="video_size" :src="movieData[1].url" preload="none" muted playsinline controls></video>
         <div>
-          <select v-model="selected.movie2" @change="getMovie($event, 1)">
+          <select style="border: 2px solid blue" v-model="selected.movie2" @change="getMovie($event, 1)">
             <option disabled value="">{{message.selectMovie2}}</option>
             <option v-for="(item, index) in uiDisplay" :key="index" :value="item.movieName">{{item.movieName}}</option>
           </select>
