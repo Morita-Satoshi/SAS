@@ -60,19 +60,19 @@ export default {
 <style>
 
 img.resize_image.tab_image1{
-  max-width:5%;
+  max-width:7%;
   height: auto;
   display: inline-block;
 }
 
 img.resize_image.tab_image2 {
-  max-width:10%;
+  max-width:15%;
   height: auto;
   display: inline-block;
 }
 
 img.resize_image.tab_images{
-  max-width:8%;
+  max-width:12%;
   height: auto;
   display: inline-block;
 }
