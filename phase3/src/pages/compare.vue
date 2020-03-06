@@ -14,48 +14,6 @@
       <!-- 1つ目のMovieの表示領域 [E] -->
       <!-- 2つ目のMovieの表示領域 [S] -->
       <div>
-<<<<<<< HEAD
-        <button
-          type="button"
-          v-for="item in sample"
-          :key="item.name"
-          class="v-btn vv-btn--contained v-size--large theme-light"
-          @click="getMovie(item)"
-        >{{item.name + message.getMovie}}</button>
-        <button
-          type="button"
-          class="v-btn vv-btn--contained v-size--large theme-light"
-          @click="playMovie"
-        >動画再生</button>
-        <button
-          type="button"
-          class="v-btn vv-btn--contained v-size--large theme-light"
-          @click="pauseMovie"
-        >動画停止</button>
-      </div>
-      <video
-        id="video1"
-        :src="movieData.url1"
-        width="320"
-        height="240"
-        preload="none"
-        autoplay
-        muted
-        playsinline
-        controls
-      ></video>
-      <video
-        id="video2"
-        :src="movieData.url2"
-        width="320"
-        height="240"
-        preload="none"
-        autoplay
-        muted
-        playsinline
-        controls
-      ></video>
-=======
         <video id="video2" class="video_size" :src="movieData[1].url" preload="none" muted playsinline controls></video>
         <div>
           <select v-model="selected.movie2" @change="getMovie($event, 1)">
@@ -71,7 +29,6 @@
         <button type="button" class="v-btn vv-btn--contained v-size--large theme-light" @click="pauseMovie">動画停止</button>
       </div>
       <!-- 再生/停止ボタン表示領域 [E] -->
->>>>>>> compare
     </v-flex>
   </v-layout>
 </template>
@@ -80,9 +37,6 @@
 export default {
   data() {
     return {
-<<<<<<< HEAD
-      moviePath: "",
-=======
       // S3動画情報
       s3Movie: [
         { 
@@ -118,39 +72,17 @@ export default {
       // 動画ファイル拡張子(小文字で定義)
       movieExtension: '.mov',
       // メッセージリスト
->>>>>>> compare
       message: {
         selectMovie1: "1つ目の動画を選んでください",
         selectMovie2: "2つ目の動画を選んでください",
         getMovie: "動画取得",
         playMovie: "動画再生"
       },
-<<<<<<< HEAD
-      sample: [
-        { name: "Eguchi", s3BucketPath: "eguchi" },
-        { name: "Morita", s3BucketPath: "morita" },
-        { name: "Yaguchi", s3BucketPath: "yaguchi" }
-      ],
-      awsS3Info: {
-        bucket: "sas-noboru-upload",
-        region: "ap-northeast-1"
-      },
-      s3BucketList: {},
-      s3MovieList: {},
-      movieData: {
-        url1: "",
-        url2: ""
-      },
-      counter: 0,
-      movieFormat: ".mov" // 動画ファイル拡張子 -> 小文字で定義すること
-    };
-=======
       movieData: [
         { url: null },
         { url: null },
       ],
     }
->>>>>>> compare
   },
   created() {
     console.log("created");
@@ -165,11 +97,6 @@ export default {
     compareImage(e) {
       this.$store.commit("compare/compare");
     },
-<<<<<<< HEAD
-    // LoginUser情報取得
-    getLoginUser: function() {
-      console.log("getLoginUser");
-=======
     // 初期化処理
     initialize: function() {
       console.log('initialize');
@@ -184,7 +111,6 @@ export default {
       var self = this;
       const store = window.$nuxt.$store;
       self.loginUserName = store.getters['user/username'];
->>>>>>> compare
     },
     // Credential情報取得
     getCredentials: function() {
@@ -202,29 +128,6 @@ export default {
       var self = this;
       return new AWS.S3({
         params: {
-<<<<<<< HEAD
-          Bucket: self.awsS3Info.bucket,
-          Region: self.awsS3Info.region
-        }
-      });
-    },
-    // S3バケットの中身を取得
-    getS3BucketList: function() {
-      console.log("getS3BucketList");
-      var self = this;
-      var s3 = self.getS3Instance();
-      s3.listObjects(function(err, data) {
-        if (err) {
-          console.log("listObjects err: " + err);
-        } else {
-          console.log("listObjects success: " + JSON.stringify(data.Contents));
-          self.s3BucketList = data.Contents;
-          data.Contents.forEach(item => {
-            var key = item.Key;
-            console.log("key: " + key);
-            if (key.toLowerCase().indexOf(self.movieFormat) !== -1) {
-              self.pushMovieList(key);
-=======
           Bucket: self.awsS3.bucket,
           Region: self.awsS3.region,
         }
@@ -249,20 +152,13 @@ export default {
             if (filepath.toLowerCase().indexOf(self.movieExtension) !== -1) {
               // ファイルパスに動画ファイルの拡張子が含まれている
               self.pushS3MovieList(filepath);
->>>>>>> compare
             }
           });
         }
       });
     },
-<<<<<<< HEAD
-    // 動画リスト
-    pushMovieList: function(key) {
-      console.log("pushMovieList key: " + key);
-=======
     pushS3MovieList: function(filepath) {
       console.log('pushS3MovieList: ' + filepath);
->>>>>>> compare
       var self = this;
       // 見本の動画リストをチェック
       self.models.forEach(item => {
@@ -276,37 +172,6 @@ export default {
           var index = self.getIndexFromObjectArray(self.s3Movie, 'path', filepath);
         }
       });
-<<<<<<< HEAD
-      console.log("S3 Movie List: " + JSON.stringify(self.s3MovieList));
-    },
-    // 動画取得
-    getMovie: function(item) {
-      console.log("getMovie item: " + JSON.stringify(item));
-      var self = this;
-      console.log("key: " + JSON.stringify(self.s3MovieList));
-
-      var s3 = self.getS3Instance();
-      const signedUrl = s3.getSignedUrl(
-        "getObject",
-        {
-          Bucket: self.awsS3Info.bucket,
-          Key: self.s3MovieList[item.name],
-          Expires: 60
-        },
-        (err, signedUrl) => {
-          if (err) {
-            console.log("getSignedUrl err: " + err);
-          } else {
-            console.log("getSignedUrl success: " + signedUrl);
-            if (!(self.counter % 2)) {
-              self.movieData.url1 = signedUrl;
-              self.counter++;
-            } else {
-              self.movieData.url2 = signedUrl;
-              self.counter--;
-            }
-          }
-=======
       console.log('loginUserName: ' + self.loginUserName);
       // ログインユーザーのチェック
       if (filepath.indexOf(self.loginUserName) !== -1) {
@@ -385,7 +250,6 @@ export default {
           console.log('getSignedUrl success: ' + signedUrl);
           self.movieData[which].url = signedUrl;
           console.log('self.movieData[' + which + '].url: ' + self.movieData[which].url);
->>>>>>> compare
         }
       );
     },
