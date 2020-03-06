@@ -1,42 +1,39 @@
 <template>
-
-<label>test</label>
-</template><template>
   <div>
-    <h1>投球フォームのポイントを学習してみよう！</h1>
+    <h1>ピッチングを学ぼう!</h1>
     <div id="tabs" class="container">
       <div class="tabs">
           <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">
-              <img :src = "displayImages[0].tab" width="100" height="120">
+              <img :src = "displayImages[0].tab" class="resize_image tab_image1">
           </a>
           <a v-on:click="activetab=2" v-bind:class="[ activetab === 2 ? 'active' : '' ]">
-              <img :src = "displayImages[1].tab" width="100" height="120">
+              <img :src = "displayImages[1].tab" class="resize_image tab_image2">
           </a>
           <a v-on:click="activetab=3" v-bind:class="[ activetab === 3 ? 'active' : '' ]">
-              <img :src = "displayImages[2].tab" width="100" height="120">
+              <img :src = "displayImages[2].tab" class="resize_image tab_images">
           </a>
           <a v-on:click="activetab=4" v-bind:class="[ activetab === 4 ? 'active' : '' ]">
-              <img :src = "displayImages[3].tab" width="100" height="120">
+              <img :src = "displayImages[3].tab" class="resize_image tab_images">
           </a>
           <a v-on:click="activetab=5" v-bind:class="[ activetab === 5 ? 'active' : '' ]">
-              <img :src = "displayImages[4].tab" width="100" height="120">
+              <img :src = "displayImages[4].tab" class="resize_image tab_images">
           </a>
       </div>
       <div class="content">
           <div v-show="activetab === 1" class="tabcontent">
-              <img :src = "displayImages[0].contents">
+              <img :src = "displayImages[0].contents" class="resize_image contents_image">
           </div>
           <div v-show="activetab === 2" class="tabcontent">
-              <img :src = "displayImages[1].contents">
+              <img :src = "displayImages[1].contents" class="resize_image contents_image">
           </div>
           <div v-show="activetab === 3" class="tabcontent">
-              <img :src = "displayImages[2].contents">
+              <img :src = "displayImages[2].contents" class="resize_image contents_image">
           </div>
           <div v-show="activetab === 4" class="tabcontent">
-              <img :src = "displayImages[3].contents">
+              <img :src = "displayImages[3].contents" class="resize_image contents_image">
           </div>
           <div v-show="activetab === 5" class="tabcontent">
-              <img :src = "displayImages[4].contents">
+              <img :src = "displayImages[4].contents" class="resize_image contents_image">
           </div>
       </div>
     </div>
@@ -59,3 +56,31 @@ export default {
     }
 }
 </script>
+
+<style>
+
+img.resize_image.tab_image1{
+  max-width:7%;
+  height: auto;
+  display: inline-block;
+}
+
+img.resize_image.tab_image2 {
+  max-width:15%;
+  height: auto;
+  display: inline-block;
+}
+
+img.resize_image.tab_images{
+  max-width:12%;
+  height: auto;
+  display: inline-block;
+}
+
+img.resize_image.contents_image {
+    max-width:100%;
+    height: auto;
+    display: inline-block;
+}
+
+</style>
