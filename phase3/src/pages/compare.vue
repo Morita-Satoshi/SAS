@@ -251,7 +251,7 @@ export default {
           self.movieData[which].url = signedUrl;
           console.log('self.movieData[' + which + '].url: ' + self.movieData[which].url);
         }
-      );
+      });
     },
 
     // 一括動画再生
