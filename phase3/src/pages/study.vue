@@ -4,36 +4,36 @@
     <div id="tabs" class="container">
       <div class="tabs">
           <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">
-              <img :src = "displayImages[0].tab" class="resize_image tab_image" aspect-ratio="1">
+              <img :src = "displayImages[0].tab" class="resize_image tab_image">
           </a>
           <a v-on:click="activetab=2" v-bind:class="[ activetab === 2 ? 'active' : '' ]">
-              <img :src = "displayImages[1].tab" class="resize_image tab_image" aspect-ratio="1">
+              <img :src = "displayImages[1].tab" class="resize_image tab_image">
           </a>
           <a v-on:click="activetab=3" v-bind:class="[ activetab === 3 ? 'active' : '' ]">
-              <img :src = "displayImages[2].tab" class="resize_image tab_image" aspect-ratio="1">
+              <img :src = "displayImages[2].tab" class="resize_image tab_image">
           </a>
           <a v-on:click="activetab=4" v-bind:class="[ activetab === 4 ? 'active' : '' ]">
-              <img :src = "displayImages[3].tab" class="resize_image tab_image" aspect-ratio="1">
+              <img :src = "displayImages[3].tab" class="resize_image tab_image">
           </a>
           <a v-on:click="activetab=5" v-bind:class="[ activetab === 5 ? 'active' : '' ]">
-              <img :src = "displayImages[4].tab" class="resize_image tab_image" aspect-ratio="1">
+              <img :src = "displayImages[4].tab" class="resize_image tab_image">
           </a>
       </div>
       <div class="content">
           <div v-show="activetab === 1" class="tabcontent">
-              <img :src = "displayImages[0].contents" class="resize_image contents_image" aspect-ratio="1">
+              <img :src = "displayImages[0].contents" class="resize_image contents_image">
           </div>
           <div v-show="activetab === 2" class="tabcontent">
-              <img :src = "displayImages[1].contents" class="resize_image contents_image" aspect-ratio="1">
+              <img :src = "displayImages[1].contents" class="resize_image contents_image">
           </div>
           <div v-show="activetab === 3" class="tabcontent">
-              <img :src = "displayImages[2].contents" class="resize_image contents_image" aspect-ratio="1">
+              <img :src = "displayImages[2].contents" class="resize_image contents_image">
           </div>
           <div v-show="activetab === 4" class="tabcontent">
-              <img :src = "displayImages[3].contents" class="resize_image contents_image" aspect-ratio="1">
+              <img :src = "displayImages[3].contents" class="resize_image contents_image">
           </div>
           <div v-show="activetab === 5" class="tabcontent">
-              <img :src = "displayImages[4].contents" class="resize_image contents_image" aspect-ratio="1">
+              <img :src = "displayImages[4].contents" class="resize_image contents_image">
           </div>
       </div>
     </div>
@@ -68,7 +68,7 @@ img.resize_image.tab_image {
 img.resize_image.contents_image {
     max-width:100%;
     height: auto;
-    display: block;
+    display: inline-block;
 }
 
 </style>
