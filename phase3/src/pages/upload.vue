@@ -3,43 +3,49 @@
     <div>
       <h1>動画をアップロードしよう</h1>
       <div class="image">
-        <label v-show="!uploadfile" class="input-item_label"
-          >画像を選択
+        <label v-show="!uploadfile" class="input-item_label">
+          画像を選択
           <input type="file" @change="changeFile" />
         </label>
         <div class="preview-item">
-          <img
-            v-show="uploadfile"
-            class="preview-item-file"
-            :src="uploadfile"
-            alt=""
-          />
+          <img v-show="uploadfile" class="preview-item-file" :src="uploadfile" alt />
           <div v-show="uploadfile" class="preview-item-btn" @click="remove">
             <p class="preview-item-name">{{ img_name }}</p>
-            <button class="v-btn v-btn--contained v-size--large theme--light">
-              キャンセル
-            </button>
+            <button class="v-btn v-btn--contained v-size--large theme--light">キャンセル</button>
           </div>
         </div>
       </div>
       <style>
-        .image {
-          margin-bottom: 20px;
-        }
+  .image {
+    margin-bottom: 20px;
+  }
       </style>
       <button
         type="button"
         class="v-btn v-btn--contained v-size--large theme--light"
         @click="uploadData"
-      >
-        アップロード
-      </button>
+      >アップロード</button>
     </div>
   </section>
 </template>
 
 <script>
+import Vue from "vue";
+// Import component
+import Loading from "vue-loading-overlay";
+// Import stylesheet
+import "vue-loading-overlay/dist/vue-loading.css";
+// Init plugin
+Vue.use(Loading);
+
 export default {
+  mounted() {
+    this.$nextTick(() => {
+      this.$nuxt.$loading.start();
+
+      setTimeout(() => this.$nuxt.$loading.finish(), 500);
+    });
+  },
   data() {
     return {
       uploadfile: false,
@@ -50,6 +56,12 @@ export default {
   components: {},
   methods: {
     uploadData(e) {
+      //loading start
+      let loader = this.$loading.show({
+        // Optional parameters
+        container: this.fullPage ? null : this.$refs.formContainer,
+        canCancel: false
+      });
       const store = window.$nuxt.$store;
       var AWS = require("aws-sdk");
       var s3_client = function() {
@@ -82,6 +94,8 @@ export default {
           ACL: "private"
         },
         function(err, data) {
+          //loading end
+          loader.hide();
           if (data !== null) {
             alert("アップロード成功!");
             //clear
