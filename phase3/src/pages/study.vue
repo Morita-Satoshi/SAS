@@ -1,22 +1,22 @@
 <template>
   <div>
-    <h1>ピッチングを学んでみよう</h1>
+    <h1>ピッチングを学ぼう!</h1>
     <div id="tabs" class="container">
       <div class="tabs">
           <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">
-              <img :src = "displayImages[0].tab" class="resize_image tab_image">
+              <img :src = "displayImages[0].tab" class="resize_image tab_image1">
           </a>
           <a v-on:click="activetab=2" v-bind:class="[ activetab === 2 ? 'active' : '' ]">
-              <img :src = "displayImages[1].tab" class="resize_image tab_image">
+              <img :src = "displayImages[1].tab" class="resize_image tab_image2">
           </a>
           <a v-on:click="activetab=3" v-bind:class="[ activetab === 3 ? 'active' : '' ]">
-              <img :src = "displayImages[2].tab" class="resize_image tab_image">
+              <img :src = "displayImages[2].tab" class="resize_image tab_images">
           </a>
           <a v-on:click="activetab=4" v-bind:class="[ activetab === 4 ? 'active' : '' ]">
-              <img :src = "displayImages[3].tab" class="resize_image tab_image">
+              <img :src = "displayImages[3].tab" class="resize_image tab_images">
           </a>
           <a v-on:click="activetab=5" v-bind:class="[ activetab === 5 ? 'active' : '' ]">
-              <img :src = "displayImages[4].tab" class="resize_image tab_image">
+              <img :src = "displayImages[4].tab" class="resize_image tab_images">
           </a>
       </div>
       <div class="content">
@@ -59,8 +59,20 @@ export default {
 
 <style>
 
-img.resize_image.tab_image {
-  max-width:20%;
+img.resize_image.tab_image1{
+  max-width:5%;
+  height: auto;
+  display: inline-block;
+}
+
+img.resize_image.tab_image2 {
+  max-width:10%;
+  height: auto;
+  display: inline-block;
+}
+
+img.resize_image.tab_images{
+  max-width:8%;
   height: auto;
   display: inline-block;
 }
