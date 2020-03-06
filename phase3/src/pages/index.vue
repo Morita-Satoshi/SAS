@@ -1,8 +1,8 @@
 <template>
   <v-card>
-    <v-card-title>継続日数</v-card-title>
-    <v-card-text>9日</v-card-text>
-    <v-card-actions>アクションがある</v-card-actions>
+    <v-card-title>とものくん協力ありがとう！！</v-card-title>
+    <v-card-text></v-card-text>
+    <v-card-actions>やりたいことがあったらお父さんにいってね！</v-card-actions>
   </v-card>
 </template>
 

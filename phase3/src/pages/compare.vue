@@ -55,11 +55,41 @@
         playsinline
         controls
       ></video>
+      <div class="align-center">
+        <v-subheader>100点満点でふりかえろう。(右が100点だよ！)</v-subheader>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12" md="6" class="pr-4">
+              <v-slider v-model="slider" class="align-center" :max="100" :min="0" hide-details>
+                <template v-slot:append>
+                  <v-text-field
+                    id="userScore"
+                    v-model="slider"
+                    class="mt-0 pt-0"
+                    hide-details
+                    single-line
+                    type="number"
+                    style="width: 60px"
+                  ></v-text-field>
+                </template>
+              </v-slider>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-col cols="12" md="6">
+          <v-textarea id="userEvaluate" outlined name="input-7-4" label="今日の感想を書こう"></v-textarea>
+        </v-col>
+        <div cols="12" md="6" class="my-2">
+          <v-btn small @click="postEvaluation">とうろく</v-btn>
+        </div>
+      </div>
     </v-flex>
   </v-layout>
+  <!-- 点数づけ -->
 </template>
 
 <script>
+import api from "../store/api";
 export default {
   data() {
     return {
@@ -205,6 +235,32 @@ export default {
       var v2 = document.getElementById("video2");
       v1.pause();
       v2.pause();
+    },
+    postEvaluation: function() {
+      const store = window.$nuxt.$store;
+      api
+        .post("/user/self-evaluate", {
+          username: store.getters["user/username"],
+          score: document.getElementById("userScore")._value,
+          comment: document.getElementById("userEvaluate")._value
+        })
+        .then(() => {
+          // async authentication
+          // logged in
+          // if a user logged in successfully then redirect to root page (pages/index.vue).
+          alert("記録ありがとう");
+        })
+        .catch(error => {
+          // login error
+          if (error.response) {
+            if (error.response.status == 401) this.error = "401エラー:";
+            else if (error.response.status == 500)
+              this.error = "500エラー:サーバーエラー";
+            else if (error.response.status == 501)
+              this.error = "501エラー:サーバーエラー";
+          } else this.error = error;
+          this.loggingin = false;
+        });
     }
   }
 };

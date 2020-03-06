@@ -1,17 +1,17 @@
 <template>
   <section class="container">
     <div>
-      <h1>動画をアップロードしよう</h1>
+      <h1>自分のフォームを登録しよう</h1>
       <div class="image">
         <label v-show="!uploadfile" class="input-item_label">
-          画像を選択
-          <input type="file" @change="changeFile" />
+          フォームをえらぶ
+          <input type="file" id="inputfile" @change="changeFile" />
         </label>
         <div class="preview-item">
           <img v-show="uploadfile" class="preview-item-file" :src="uploadfile" alt />
           <div v-show="uploadfile" class="preview-item-btn" @click="remove">
             <p class="preview-item-name">{{ img_name }}</p>
-            <button class="v-btn v-btn--contained v-size--large theme--light">キャンセル</button>
+            <button class="v-btn v-btn--contained v-size--large theme--light">やめる</button>
           </div>
         </div>
       </div>
@@ -24,7 +24,7 @@
         type="button"
         class="v-btn v-btn--contained v-size--large theme--light"
         @click="uploadData"
-      >アップロード</button>
+      >登録</button>
     </div>
   </section>
 </template>
@@ -42,14 +42,13 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.$nuxt.$loading.start();
-
       setTimeout(() => this.$nuxt.$loading.finish(), 500);
     });
   },
   data() {
     return {
       uploadfile: false,
-      img_name: "",
+      img_name: false,
       fullPage: true
     };
   },
@@ -97,18 +96,20 @@ export default {
           //loading end
           loader.hide();
           if (data !== null) {
-            alert("アップロード成功!");
             //clear
+            var obj = document.getElementById("inputfile");
+            obj.value = "";
             this.uploadfile = false;
-            this.img_name = "";
+            this.img_name = false;
+            alert("登録成功!");
           } else {
-            alert("アップロード失敗.");
+            alert("登録失敗.");
           }
         }
       );
     },
     changeFile(e) {
-      const files = e.target.files || e.dataTransfer.files;
+      var files = e.target.files || e.dataTransfer.files;
       // ファイルが選択されたら変数に入れる
       this.uploadfile = files[0];
       this.img_name = files[0].name;
@@ -123,7 +124,9 @@ export default {
     },
     remove() {
       this.uploadfile = false;
-      this.img_name = "";
+      this.img_name = false;
+      var obj = document.getElementById("inputfile");
+      obj.value = "";
     }
   }
 };

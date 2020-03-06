@@ -106,6 +106,5 @@ export const actions = {
         reject(error)
       })
     })
-
   }
 }
