@@ -27,6 +27,15 @@
           </select>
         </div>
       </div>
+      <div>
+        <button
+          type="button"
+          style="border: 1px solid red"
+          class="v-btn vv-btn--contained v-size--large theme-light"
+          @click="getBornMovie(0)"
+          v-show="(movieData[0].url != null && existBornMovie[0].url) == true"
+        >{{message.getBornMovie}}</button>
+      </div>
       <!-- 1つ目のMovieの表示領域 [E] -->
       <!-- 2つ目のMovieの表示領域 [S] -->
       <div>
@@ -54,6 +63,15 @@
           </select>
         </div>
       </div>
+      <div>
+        <button
+          type="button"
+          style="border: 1px solid red"
+          class="v-btn vv-btn--contained v-size--large theme-light"
+          @click="getBornMovie(1)"
+          v-show="(movieData[1].url != null && existBornMovie[1].url) == true"
+        >{{message.getBornMovie}}</button>
+      </div>
       <!-- 2つ目のMovieの表示領域 [E] -->
       <!-- 再生/停止ボタン表示領域 [S] -->
       <div v-show="(movieData[0].url != null && movieData[1].url != null) == true">
@@ -61,12 +79,12 @@
           type="button"
           class="v-btn vv-btn--contained v-size--large theme-light"
           @click="playMovie"
-        >動画再生</button>
+        >{{message.playMovie}}</button>
         <button
           type="button"
           class="v-btn vv-btn--contained v-size--large theme-light"
           @click="pauseMovie"
-        >動画停止</button>
+        >{{message.pauseMovie}}</button>
       </div>
       <!-- 採点パート -->
       <div class="align-center">
@@ -112,6 +130,7 @@ export default {
         {
           // フォルダ名 folderName
           // 動画パス path
+          // 骨動画パス bornPath
         }
       ],
       // UI表示情報
@@ -139,6 +158,8 @@ export default {
       ],
       // ログインユーザー名
       loginUserName: null,
+      // 骨動画ファイルPostFix
+      bornMovieNamePostFix: "_Born",
       // 動画ファイル拡張子(小文字で定義)
       movieExtension: ".mov",
       // メッセージリスト
@@ -146,9 +167,15 @@ export default {
         selectMovie1: "1つ目の動画を選んでください",
         selectMovie2: "2つ目の動画を選んでください",
         getMovie: "動画取得",
-        playMovie: "動画再生"
+        playMovie: "動画再生",
+        pauseMovie: "動画停止",
+        getBornMovie: "骨動画取得",
       },
-      movieData: [{ url: null }, { url: null }]
+      movieData: [{ url: null }, { url: null }],
+      existBornMovie: [{ url: false }, { url: false }],
+      bornMovie: [{ timer: null }, { timer: null }],
+      retry: 0,
+      maxRetry: 50,
     };
   },
   created() {
@@ -228,12 +255,14 @@ export default {
       var self = this;
       // 見本の動画リストをチェック
       self.models.forEach(item => {
-        if (filepath.indexOf(item.folderName) !== -1) {
+        if ( (filepath.indexOf(item.folderName) !== -1) && (filepath.indexOf(self.bornMovieNamePostFix) === -1) ) {
           console.log("filepath: " + filepath);
           var movieName = self.getMovieName(item.userName, filepath);
+          var bornMovieFilePath = self.getBornMovieName(filepath);
           console.log("movieName: " + movieName);
+          console.log("bornMovieFilePath: " + bornMovieFilePath);
           // 動画パスを格納
-          self.s3Movie.push({ folderName: item.folderName, path: filepath });
+          self.s3Movie.push({ folderName: item.folderName, path: filepath, bornPath: bornMovieFilePath });
           self.uiDisplay.push({
             userName: item.userName,
             movieName: movieName
@@ -247,11 +276,13 @@ export default {
       });
       console.log("loginUserName: " + self.loginUserName);
       // ログインユーザーのチェック
-      if (filepath.indexOf(self.loginUserName) !== -1) {
+      if ( (filepath.indexOf(self.loginUserName) !== -1) && (filepath.indexOf(self.bornMovieNamePostFix) === -1) ) {
         console.log("filepath: " + filepath);
         var movieName = self.getMovieName(self.loginUserName, filepath);
+        var bornMovieFilePath = self.getBornMovieName(filepath);
         console.log("movieName: " + movieName);
-        self.s3Movie.push({ folderName: self.loginUserName, path: filepath });
+        console.log("bornMovieFilePath: " + bornMovieFilePath);
+        self.s3Movie.push({ folderName: self.loginUserName, path: filepath, bornPath: bornMovieFilePath });
         self.uiDisplay.push({
           userName: self.loginUserName,
           movieName: movieName
@@ -288,6 +319,14 @@ export default {
       console.log("time: " + time);
       return userName + "_" + time;
     },
+    getBornMovieName: function(filepath) {
+      console.log("getBornMovieName filepath: " + filepath);
+      var self = this;
+      var pattern = /(.+)(\.[^.]+$)/;
+      var bornFilePath = filepath.match(pattern)[1] + self.bornMovieNamePostFix + self.movieExtension;
+      console.log("bornfilePath: " + bornFilePath); 
+      return bornFilePath;
+    },
     // Unix時間の取得
     getUnixTime: function(filepath) {
       console.log("getTime filepath: " + filepath);
@@ -318,6 +357,29 @@ export default {
         second;
       return time;
     },
+    // getSignedUrlラッパー
+    getSignedUrl: function(bucket, key, expires, which) {
+      console.log("getSignedUrl bucket: " + bucket + " key: " + key + " expires: " + expires + " which: " + which);
+      var self = this;
+
+      var s3 = self.getS3Instance();
+      const signedUrl = s3.getSignedUrl(
+        "getObject",
+        {
+          Bucket: bucket,
+          Key: key,
+          Expires: expires
+        },
+        (err, signedUrl) => {
+          if (err) {
+            console.log("getSignedUrl err: " + err);
+          } else {
+            console.log("getSignedUrl success: " + signedUrl);
+            self.movieData[which].url = signedUrl;
+          }
+        }
+      );
+    },
     // 動画取得
     getMovie: function(event, which) {
       //console.log('getMovie item: ' + JSON.stringify(item));
@@ -332,29 +394,56 @@ export default {
         "movieName",
         selected
       );
+      self.getSignedUrl(self.awsS3.bucket, self.s3Movie[index].path, 60, which);
+      self.checkBornMovie(self.awsS3.bucket, self.s3Movie[index].bornPath, which);
+    },
+    // 骨動画取得
+    getBornMovie: function(which) {
+      console.log("getBornMovie which: " + which);
+      var self = this;
+      var selected = which == 0 ? self.selected.movie1 : self.selected.movie2;
+      console.log("getBornMovie selected: " + selected);
+      var index = self.getIndexFromObjectArray(
+        self.uiDisplay,
+        "movieName",
+        selected
+      );
+      self.getSignedUrl(self.awsS3.bucket, self.s3Movie[index].bornPath, 60, which);
+    },
+    // 骨動画有無チェック
+    checkBornMovie: function(bucket, key, which) {
+      console.log("checkBornMovie bucket: " + bucket + " key: " + key + " which: " + which);
+      var self = this;
+      var bucket = bucket;
+      var key = key;
+      var which = which;
       var s3 = self.getS3Instance();
-
-      const signedUrl = s3.getSignedUrl(
-        "getObject",
-        {
-          Bucket: self.awsS3.bucket,
-          Key: self.s3Movie[index].path,
-          Expires: 60
-        },
-        (err, signedUrl) => {
-          if (err) {
-            console.log("getSignedUrl err: " + err);
-          } else {
-            console.log("getSignedUrl success: " + signedUrl);
-            self.movieData[which].url = signedUrl;
-            console.log(
-              "self.movieData[" + which + "].url: " + self.movieData[which].url
-            );
+      var params = {
+        Bucket: bucket,
+        Key: key,
+      };
+      s3.getObject(params, function(error, data) {
+        if (error) {
+          console.log("getObject Err: " + error);
+//        clearTimeout(self.bornMovie[which].timer);
+          self.existBornMovie[which].url = false;
+          console.log("bucket: " + bucket + " key: " + key + " which: " + which);
+          self.retry++;
+          if (self.retry < self.maxRetry) {
+            self.checkBornMovie(bucket, key, which);
+          }
+          else {
+            self.retry = 0;
           }
         }
-      );
+        else {
+          console.log("getObject Success which: " + which);
+          //clearInterval(self.bornMovie[which].timer);
+          self.existBornMovie[which].url = true;
+          self.retry = 0;
+        }
+      })
     },
-
     // 一括動画再生
     playMovie: function() {
       console.log("playMovie");
@@ -401,15 +490,6 @@ export default {
 </script>
 
 <style>
-/*
-// 表示領域が600px以上の場合
-@media (min-width: 600px) {
-}
-// 表示領域が600px未満の場合
-@media (max-width: 599px) {
-}
-*/
-
 .row.align {
   text-align: center;
   display: inherit;
