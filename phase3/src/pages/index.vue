@@ -1,8 +1,8 @@
 <template>
   <v-card>
-    <v-card-title>とものくん協力ありがとう！！</v-card-title>
+    <v-card-title>今日も元気に頑張りましょう！</v-card-title>
     <v-card-text></v-card-text>
-    <v-card-actions>やりたいことがあったらお父さんにいってね！</v-card-actions>
+    <v-card-actions>適宜アップデート中</v-card-actions>
   </v-card>
 </template>
 
