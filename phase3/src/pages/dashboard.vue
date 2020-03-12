@@ -1,18 +1,34 @@
 <template>
-  <div v-if="isPrepare">
-    <html>
-      <div class="column">
-        <h3>振り返ろう！！</h3>
-        <chart :score="score" :date="date"></chart>
-      </div>
-      <body>
-        <div id="app"></div>
-        <!-- built files will be auto injected -->
-      </body>
-      <h3>昔のコメント</h3>
-      <li v-for="item in this.comment">{{ item }}</li>
-    </html>
-  </div>
+<div v-if="isPrepare">
+  <html>
+    <div class="column">
+      <chart :score="score" :date="date"></chart>
+    </div>
+    <body>
+      <div id="app"></div>
+      <!-- built files willu be auto injected -->
+    </body>
+    <div>
+      <table border="2">
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>コメント</th>
+            <th>点数</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr v-for="row in this.Items">
+            <td>{{row.date}}</td>
+            <td>{{row.comment}}</td>
+            <td>{{row.score}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </html>
+</div>
 </template>
 
 <script>
@@ -33,6 +49,7 @@ export default {
       comment: [],
       score: [],
       date: [],
+      items: [],
       isPrepare: false
     };
   },
@@ -42,15 +59,22 @@ export default {
         var tmpScoreArray = [];
         var tmpDateArray = [];
         var tmpCommentArray = [];
+        var tmpItemsArray = [];
         for (var i = 0; i < resp.data.length; i++) {
           tmpScoreArray.push(resp.data[i].score);
           var convertDate = this.convertUnixTimetoDate(resp.data[i].datetime);
           tmpDateArray.push(convertDate);
           tmpCommentArray.push(resp.data[i].comment);
+          tmpItemsArray.push({
+            date: convertDate,
+            comment: resp.data[i].comment,
+            score: resp.data[i].score
+          });
         }
         this.score = tmpScoreArray;
         this.date = tmpDateArray;
         this.comment = tmpCommentArray;
+        this.Items = tmpItemsArray;
         this.isPrepare = true;
       });
     },
