@@ -9,6 +9,8 @@
         <div id="app"></div>
         <!-- built files will be auto injected -->
       </body>
+      <h3>昔のコメント</h3>
+      <li v-for="item in this.comment">{{ item }}</li>
     </html>
   </div>
 </template>
@@ -39,13 +41,16 @@ export default {
       api.get("/user/self-evaluate").then(resp => {
         var tmpScoreArray = [];
         var tmpDateArray = [];
+        var tmpCommentArray = [];
         for (var i = 0; i < resp.data.length; i++) {
           tmpScoreArray.push(resp.data[i].score);
           var convertDate = this.convertUnixTimetoDate(resp.data[i].datetime);
           tmpDateArray.push(convertDate);
+          tmpCommentArray.push(resp.data[i].comment);
         }
         this.score = tmpScoreArray;
         this.date = tmpDateArray;
+        this.comment = tmpCommentArray;
         this.isPrepare = true;
       });
     },
