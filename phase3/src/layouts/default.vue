@@ -48,7 +48,7 @@ export default {
       items: [
         {
           icon: "mdi-apps",
-          title: "振り返り",
+          title: "TOP",
           to: "/"
         },
         {
@@ -65,6 +65,11 @@ export default {
           icon: "mdi-notebook",
           title: "勉強しよう",
           to: "/study"
+        },
+        {
+          icon: "mdi-apps",
+          title: "振り返り",
+          to: "/dashboard"
         }
       ],
       miniVariant: false,
