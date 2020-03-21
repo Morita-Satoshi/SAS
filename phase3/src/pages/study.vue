@@ -3,19 +3,19 @@
     <h1>ピッチングを学ぼう!</h1>
     <div id="tabs" class="container">
       <div class="tabs">
-          <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">
+          <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]" @click=getBornImage(1)>
               <img :src = "displayImages[0].tab" class="resize_image tab_image1">
           </a>
-          <a v-on:click="activetab=2" v-bind:class="[ activetab === 2 ? 'active' : '' ]">
+          <a v-on:click="activetab=2" v-bind:class="[ activetab === 2 ? 'active' : '' ]" @click=getBornImage(2)>
               <img :src = "displayImages[1].tab" class="resize_image tab_image2">
           </a>
-          <a v-on:click="activetab=3" v-bind:class="[ activetab === 3 ? 'active' : '' ]">
+          <a v-on:click="activetab=3" v-bind:class="[ activetab === 3 ? 'active' : '' ]" @click=getBornImage(3)>
               <img :src = "displayImages[2].tab" class="resize_image tab_images">
           </a>
-          <a v-on:click="activetab=4" v-bind:class="[ activetab === 4 ? 'active' : '' ]">
+          <a v-on:click="activetab=4" v-bind:class="[ activetab === 4 ? 'active' : '' ]" @click=getBornImage(4)>
               <img :src = "displayImages[3].tab" class="resize_image tab_images">
           </a>
-          <a v-on:click="activetab=5" v-bind:class="[ activetab === 5 ? 'active' : '' ]">
+          <a v-on:click="activetab=5" v-bind:class="[ activetab === 5 ? 'active' : '' ]" @click=getBornImage(5)>
               <img :src = "displayImages[4].tab" class="resize_image tab_images">
           </a>
       </div>
@@ -36,6 +36,11 @@
               <img :src = "displayImages[4].contents" class="resize_image contents_image">
           </div>
       </div>
+      <div class="content" v-show="displayBornImage !== null">
+        <div class="tabcontent">
+          <img :src="displayBornImage" class="resize_image contents_image">
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -52,8 +57,84 @@ export default {
         { tab: '/study_tab_5.jpg', contents: '/study_contents_5.jpg' },
       ],
         activetab: 1,
+
+        awsS3: {
+          bucket: 'sas-noboru-analysis',
+          region: 'ap-northeast-1',
+        },
+        fileInfo: {
+          dirname: 'images',
+          prefix: '1584630000',
+          extension: '.jpg',
+        },
+        loginUserName: null,
+        displayBornImage: null,
       }
-    }
+    },
+    created() {
+      console.log("created");
+      var self = this;
+      self.initialize();
+    },
+    methods: {
+      initialize: function() {
+        console.log('initialize');
+        var self = this;
+        self.displayBornImage = null;
+        const store = window.$nuxt.$store;
+        self.loginUserName = store.getters["user/username"];
+        self.getCredentials();
+      },
+      getCredentials: function() {
+        console.log("getCredentials");
+        var self = this;
+        var AWS = require("aws-sdk");
+        const store = window.$nuxt.$store;
+        AWS.config.region = self.awsS3.region;
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+          IdentityPoolId: store.getters["user/identityID"]
+        });
+      },
+      getS3Instance: function() {
+        var self = this;
+        return new AWS.S3({
+          params: {
+            Bucket: self.awsS3.bucket,
+            Region: self.awsS3.region
+          }
+        });
+      },
+      getSignedUrl: function(bucket, key, expires) {
+        console.log('getSignedUrl bucket: ' + bucket + ' key: ' + key + ' expires: ' + expires);
+        var self = this;
+
+        var s3 = self.getS3Instance();
+        const signedUrl = s3.getSignedUrl(
+          'getObject',
+          {
+            Bucket: bucket,
+            Key: key,
+            Expires: expires
+          },
+          (err, signedUrl) => {
+            if (err) {
+              console.log('getSignedUrl err: ' + err);
+            }
+            else {
+              console.log('getSignedUrl success: ' + signedUrl);
+              self.displayBornImage = signedUrl;
+            }
+          }
+        );
+      },
+      getBornImage: function(index) {
+        console.log('getBornImage index: ' + index);
+        var self = this;
+
+        var key = self.loginUserName + '/' + self.fileInfo.dirname + '/' + self.fileInfo.prefix + '_' + index + self.fileInfo.extension;
+        self.getSignedUrl(self.awsS3.bucket, key, 300);
+      }
+    },
 }
 </script>
 
