@@ -88,31 +88,49 @@
       </div>
       <!-- 採点パート -->
       <div class="align-center">
-        <v-subheader>100点満点でふりかえろう。(右が100点だよ！)</v-subheader>
+        <v-subheader>どの部分に関しての感想か選ぼう</v-subheader>
+        <v-row>
+          <v-col cols="4">
+            <v-card v-on:click="motion=1">
+              <img :src="displayImages[0].tab" class="resize-for-mobile" />
+            </v-card>
+          </v-col>
+          <v-col cols="4">
+            <v-card v-on:click="motion=2">
+              <img :src="displayImages[1].tab" class="resize-for-mobile" />
+            </v-card>
+          </v-col>
+          <v-col cols="4">
+            <v-card v-on:click="motion=3">
+              <img :src="displayImages[2].tab" class="resize-for-mobile" />
+            </v-card>
+          </v-col>
+          <v-col cols="4">
+            <v-card v-on:click="motion=4">
+              <img :src="displayImages[3].tab" class="resize-for-mobile" />
+            </v-card>
+          </v-col>
+          <v-col cols="4">
+            <v-card v-on:click="motion=5">
+              <img :src="displayImages[4].tab" class="resize-for-mobile" />
+            </v-card>
+          </v-col>
+        </v-row>
         <v-card-text>
           <v-row>
             <v-col cols="12" md="6" class="pr-4">
-              <v-slider v-model="slider" class="align-center" :max="100" :min="0" hide-details>
-                <template v-slot:append>
-                  <v-text-field
-                    id="userScore"
-                    v-model="slider"
-                    class="mt-0 pt-0"
-                    hide-details
-                    single-line
-                    type="number"
-                    style="width: 60px"
-                  ></v-text-field>
-                </template>
-              </v-slider>
+              <v-text-field label="得点を入力しよう" type="number" v-model="userScore" />
+              </v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
         <v-col cols="12" md="6">
-          <v-textarea id="userEvaluate" outlined name="input-7-4" label="今日の感想を書こう"></v-textarea>
+          <v-textarea
+           id="userEvaluate"
+            outlined name="input-7-4" label="今日の感想を書こう"></v-textarea>
         </v-col>
-        <div cols="12" md="6" class="my-2">
-          <v-btn small @click="postEvaluation">とうろく</v-btn>
+        <div cols="12" md="6">
+          <v-btn large @click="postEvaluation">記録</v-btn>
         </div>
       </div>
     </v-flex>
@@ -121,8 +139,20 @@
 </template>
 
 <script>
+import Vue from "vue";
+import Loading from "vue-loading-overlay";
+// Import stylesheet
+import "vue-loading-overlay/dist/vue-loading.css";
+// Init plugin
+Vue.use(Loading);
 import api from "../store/api";
 export default {
+  mounted() {
+    this.$nextTick(() => {
+      this.$nuxt.$loading.start();
+      setTimeout(() => this.$nuxt.$loading.finish(), 500);
+    });
+  },
   data() {
     return {
       // S3動画情報
@@ -169,13 +199,22 @@ export default {
         getMovie: "動画取得",
         playMovie: "動画再生",
         pauseMovie: "動画停止",
-        getBornMovie: "骨動画取得",
+        getBornMovie: "骨動画取得"
       },
       movieData: [{ url: null }, { url: null }],
       existBornMovie: [{ url: false }, { url: false }],
       bornMovie: [{ timer: null }, { timer: null }],
       retry: 0,
       maxRetry: 50,
+      motion: 0,
+      userScore :0,
+      displayImages: [
+        { tab: "/study_tab_1.jpg", contents: "/study_contents_1.jpg" },
+        { tab: "/study_tab_2.jpg", contents: "/study_contents_2.jpg" },
+        { tab: "/study_tab_3.jpg", contents: "/study_contents_3.jpg" },
+        { tab: "/study_tab_4.jpg", contents: "/study_contents_4.jpg" },
+        { tab: "/study_tab_5.jpg", contents: "/study_contents_5.jpg" }
+      ]
     };
   },
   created() {
@@ -255,14 +294,21 @@ export default {
       var self = this;
       // 見本の動画リストをチェック
       self.models.forEach(item => {
-        if ( (filepath.indexOf(item.folderName) !== -1) && (filepath.indexOf(self.bornMovieNamePostFix) === -1) ) {
+        if (
+          filepath.indexOf(item.folderName) !== -1 &&
+          filepath.indexOf(self.bornMovieNamePostFix) === -1
+        ) {
           console.log("filepath: " + filepath);
           var movieName = self.getMovieName(item.userName, filepath);
           var bornMovieFilePath = self.getBornMovieName(filepath);
           console.log("movieName: " + movieName);
           console.log("bornMovieFilePath: " + bornMovieFilePath);
           // 動画パスを格納
-          self.s3Movie.push({ folderName: item.folderName, path: filepath, bornPath: bornMovieFilePath });
+          self.s3Movie.push({
+            folderName: item.folderName,
+            path: filepath,
+            bornPath: bornMovieFilePath
+          });
           self.uiDisplay.push({
             userName: item.userName,
             movieName: movieName
@@ -276,13 +322,20 @@ export default {
       });
       console.log("loginUserName: " + self.loginUserName);
       // ログインユーザーのチェック
-      if ( (filepath.indexOf(self.loginUserName) !== -1) && (filepath.indexOf(self.bornMovieNamePostFix) === -1) ) {
+      if (
+        filepath.indexOf(self.loginUserName) !== -1 &&
+        filepath.indexOf(self.bornMovieNamePostFix) === -1
+      ) {
         console.log("filepath: " + filepath);
         var movieName = self.getMovieName(self.loginUserName, filepath);
         var bornMovieFilePath = self.getBornMovieName(filepath);
         console.log("movieName: " + movieName);
         console.log("bornMovieFilePath: " + bornMovieFilePath);
-        self.s3Movie.push({ folderName: self.loginUserName, path: filepath, bornPath: bornMovieFilePath });
+        self.s3Movie.push({
+          folderName: self.loginUserName,
+          path: filepath,
+          bornPath: bornMovieFilePath
+        });
         self.uiDisplay.push({
           userName: self.loginUserName,
           movieName: movieName
@@ -323,8 +376,11 @@ export default {
       console.log("getBornMovieName filepath: " + filepath);
       var self = this;
       var pattern = /(.+)(\.[^.]+$)/;
-      var bornFilePath = filepath.match(pattern)[1] + self.bornMovieNamePostFix + self.movieExtension;
-      console.log("bornfilePath: " + bornFilePath); 
+      var bornFilePath =
+        filepath.match(pattern)[1] +
+        self.bornMovieNamePostFix +
+        self.movieExtension;
+      console.log("bornfilePath: " + bornFilePath);
       return bornFilePath;
     },
     // Unix時間の取得
@@ -359,7 +415,16 @@ export default {
     },
     // getSignedUrlラッパー
     getSignedUrl: function(bucket, key, expires, which) {
-      console.log("getSignedUrl bucket: " + bucket + " key: " + key + " expires: " + expires + " which: " + which);
+      console.log(
+        "getSignedUrl bucket: " +
+          bucket +
+          " key: " +
+          key +
+          " expires: " +
+          expires +
+          " which: " +
+          which
+      );
       var self = this;
 
       var s3 = self.getS3Instance();
@@ -395,7 +460,11 @@ export default {
         selected
       );
       self.getSignedUrl(self.awsS3.bucket, self.s3Movie[index].path, 60, which);
-      self.checkBornMovie(self.awsS3.bucket, self.s3Movie[index].bornPath, which);
+      self.checkBornMovie(
+        self.awsS3.bucket,
+        self.s3Movie[index].bornPath,
+        which
+      );
     },
     // 骨動画取得
     getBornMovie: function(which) {
@@ -408,11 +477,18 @@ export default {
         "movieName",
         selected
       );
-      self.getSignedUrl(self.awsS3.bucket, self.s3Movie[index].bornPath, 60, which);
+      self.getSignedUrl(
+        self.awsS3.bucket,
+        self.s3Movie[index].bornPath,
+        60,
+        which
+      );
     },
     // 骨動画有無チェック
     checkBornMovie: function(bucket, key, which) {
-      console.log("checkBornMovie bucket: " + bucket + " key: " + key + " which: " + which);
+      console.log(
+        "checkBornMovie bucket: " + bucket + " key: " + key + " which: " + which
+      );
       var self = this;
       var bucket = bucket;
       var key = key;
@@ -420,29 +496,29 @@ export default {
       var s3 = self.getS3Instance();
       var params = {
         Bucket: bucket,
-        Key: key,
+        Key: key
       };
       s3.getObject(params, function(error, data) {
         if (error) {
           console.log("getObject Err: " + error);
-//        clearTimeout(self.bornMovie[which].timer);
+          //        clearTimeout(self.bornMovie[which].timer);
           self.existBornMovie[which].url = false;
-          console.log("bucket: " + bucket + " key: " + key + " which: " + which);
+          console.log(
+            "bucket: " + bucket + " key: " + key + " which: " + which
+          );
           self.retry++;
           if (self.retry < self.maxRetry) {
             self.checkBornMovie(bucket, key, which);
-          }
-          else {
+          } else {
             self.retry = 0;
           }
-        }
-        else {
+        } else {
           console.log("getObject Success which: " + which);
           //clearInterval(self.bornMovie[which].timer);
           self.existBornMovie[which].url = true;
           self.retry = 0;
         }
-      })
+      });
     },
     // 一括動画再生
     playMovie: function() {
@@ -463,17 +539,29 @@ export default {
       v2.pause();
     },
     postEvaluation: function() {
+      //loading start
+      let loader = this.$loading.show({
+        // Optional parameters
+        container: this.fullPage ? null : this.$refs.formContainer,
+        canCancel: false
+      });
       const store = window.$nuxt.$store;
+      var comment = document.getElementById("userEvaluate")._value;
       api
         .post("/user/self-evaluate", {
           username: store.getters["user/username"],
-          score: document.getElementById("userScore")._value,
-          comment: document.getElementById("userEvaluate")._value
+          score: this.userScore,
+          comment: comment,
+          motion: this.motion
         })
         .then(() => {
+          //loading end
+          loader.hide();
           alert("記録ありがとう");
         })
         .catch(error => {
+          //loading end
+          loader.hide();
           // login error
           if (error.response) {
             if (error.response.status == 401) this.error = "401エラー:";
@@ -515,5 +603,9 @@ img.resize_image.left_image {
 img.resize_image.right_image {
   margin-right: auto;
   padding: 10px;
+}
+img.resize-for-mobile {
+  width: 60px;
+  height: 60px;
 }
 </style>
