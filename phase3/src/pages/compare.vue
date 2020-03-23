@@ -477,12 +477,7 @@ export default {
         "movieName",
         selected
       );
-      self.getSignedUrl(
-        self.awsS3.bucket,
-        self.s3Movie[index].bornPath,
-        60,
-        which
-      );
+      self.getSignedUrl(self.awsS3.bucket, self.s3Movie[index].bornPath, 600, which);
     },
     // 骨動画有無チェック
     checkBornMovie: function(bucket, key, which) {
