@@ -15,7 +15,7 @@ function getCredentials() {
 
     AWS.config.region = 'ap-northeast-1';
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'ap-northeast-1:0ecf40ae-33d3-4458-8484-4dff06b70df2'
+        IdentityPoolId: ''
     });
 }
 
