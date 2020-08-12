@@ -16,6 +16,7 @@
     "axios": "^0.19.2",
     "chart.js": "^3.0.0-alpha",
     "fs": "0.0.1-security",
+    "jquery": "^3.5.1",
     "nuxt": "^2.0.0",
     "vue-chartjs": "^3.5.0",
     "vue-loading-overlay": "^3.3.0",
