@@ -70,6 +70,11 @@ export default {
           icon: "mdi-apps",
           title: "振り返り",
           to: "/dashboard"
+        },
+        {
+          icon: "mdi-apps",
+          title: "自分を知ろう",
+          to: "/knowyourself"
         }
       ],
       miniVariant: false,
