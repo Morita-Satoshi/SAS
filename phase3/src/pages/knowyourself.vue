@@ -97,10 +97,10 @@ export default {
       },
       // 見本の情報
       models: [
-        { name: "ABC", folderName: "ABC", image: "/study_contents_1.jpg", similar: false },
-        { name: "DEF", folderName: "DEF", image: "/study_contents_2.jpg", similar: false },
-        { name: "GHI", folderName: "GHI", image: "/study_contents_3.jpg", similar: false },
-        { name: "XYZ", folderName: "XYZ", image: "/study_contents_4.jpg", similar: false }
+        { name: "OHTANI"   , folderName: "ABC", image: "/model_1.jpg", similar: false },
+        { name: "EGUCHI"   , folderName: "DEF", image: "/model_2.jpg", similar: false },
+        { name: "STRASBURG", folderName: "GHI", image: "/model_3.jpg", similar: false },
+        { name: "MOINELO"  , folderName: "XYZ", image: "/model_4.jpg", similar: false }
       ],
       // ログインユーザー名
       loginUserName: null,
@@ -133,7 +133,6 @@ export default {
     },
     // 初期化処理
     initialize: function() {
-      console.log("initialize");
       var self = this;
       self.s3Image = [];
       self.uiDisplay = [];
@@ -141,14 +140,12 @@ export default {
     },
     // LoginUser名情報取得
     getLoginUserName: function() {
-      console.log("getLoginUser");
       var self = this;
       const store = window.$nuxt.$store;
       self.loginUserName = store.getters["user/username"];
     },
     // Credential情報取得
     getCredentials: function() {
-      console.log("getCredentials");
       var self = this;
       var AWS = require("aws-sdk");
       const store = window.$nuxt.$store;
@@ -169,7 +166,6 @@ export default {
     },
     // S3画像リスト生成
     createS3ImageList: function() {
-      console.log("createS3ImageList");
       var self = this;
       var s3 = self.getS3Instance();
       // S3内オブジェクトリスト取得
@@ -177,11 +173,10 @@ export default {
         if (error) {
           console.log("listObjects error: ", error);
         } else {
-          console.log("listObjects success: " + JSON.stringify(data));
+          console.log("listObjects success");
           var objectList = data.Contents;
           objectList.forEach(item => {
             var filepath = item.Key;
-            console.log("filepath: " + filepath);
             if (filepath.toLowerCase().indexOf(self.imageExtension) !== -1) {
               // ファイルパスに対象画像の拡張子が含まれている
               self.pushS3ImageList(filepath);
@@ -191,17 +186,14 @@ export default {
       });
     },
     pushS3ImageList: function(filepath) {
-      console.log("pushS3ImageList: " + filepath);
       var self = this;
       // 見本の動画リストをチェック
       self.models.forEach(item => {
         if (
           filepath.indexOf(item.folderName) !== -1
         ) {
-          console.log("filepath: " + filepath);
           var imageName = self.getImageName(item.userName, filepath);
-          console.log("imageName: " + imageName);
-          // 動画パスを格納
+          // 画像パスを格納
           self.s3Image.push({
             folderName: item.folderName,
             path: filepath,
@@ -217,14 +209,11 @@ export default {
           );
         }
       });
-      console.log("loginUserName: " + self.loginUserName);
       // ログインユーザーのチェック
       if (
         filepath.indexOf(self.loginUserName) !== -1
       ) {
-        console.log("filepath: " + filepath);
         var imageName = self.getImageName(self.loginUserName, filepath);
-        console.log("imageName: " + imageName);
         self.s3Image.push({
           folderName: self.loginUserName,
           path: filepath,
@@ -239,11 +228,8 @@ export default {
           filepath
         );
       }
-      console.log("s3Image: " + JSON.stringify(self.s3Image));
-      console.log("uiDisplay: " + JSON.stringify(self.uiDisplay));
     },
     getIndexFromObjectArray: function(objArray, targetKey, targetValue) {
-      console.log("getIndexFromObjectArray");
       var self = this;
       var index = -1;
       for (var i = 0; i < objArray.length; i++) {
@@ -252,27 +238,21 @@ export default {
           break;
         }
       }
-      console.log("return index: " + index);
       return index;
     },
     // 画像名取得
     getImageName: function(userName, filepath) {
-      console.log("getImageName filepath: " + filepath);
       var self = this;
       var unixTime = self.getUnixTime(filepath);
-      console.log("unixTime: " + unixTime);
       var time = self.convertUnixTimeToTime(unixTime);
-      console.log("time: " + time);
       return userName + "_" + time;
     },
     // Unix時間の取得
     getUnixTime: function(filepath) {
-      console.log("getTime filepath: " + filepath);
       return filepath.match(/\d+/);
     },
     // Unix時間 <-> 時刻変換
     convertUnixTimeToTime: function(targetUnixTime) {
-      console.log("convertUnixTimeToTime targetUnixTime: " + targetUnixTime);
       var unixTime = new Date(parseInt(targetUnixTime, 10) * 1000);
       var year = ("0" + unixTime.getFullYear()).slice(-4);
       var month = ("0" + (unixTime.getMonth() + 1)).slice(-2);
@@ -319,23 +299,22 @@ export default {
           if (err) {
             console.log("getSignedUrl err: " + err);
           } else {
-            console.log("getSignedUrl success: " + signedUrl);
+            console.log("getSignedUrl success");
             self.image.url = signedUrl;
           }
         }
       );
     },
     // 解析データ取得
-    getAnalysisData: function() {
-      console.log("getAnalysisData");
+    getAnalysisData: function(imagePath) {
       var self = this;
+      var unixTime = self.getUnixTime(imagePath);
       var params = {
         "async": true,
         "crossDomain": true,
-        "url": self.api.url,
+        "url": self.api.url + "?" + unixTime,
         "method": "GET",
       };
-      console.log("params: " + JSON.stringify(params));
       $.ajax(
         params,
       ).done(function(responseData, textStatus, jqXHR) {
@@ -353,7 +332,6 @@ export default {
         item.similar = false;
       });
       var data = Object.values(responseData);
-      console.log("data: " + data);
       var value = -1
       var index = 0;
       for (let i = 0; i < data.length; i++) {
@@ -362,7 +340,6 @@ export default {
           index = i;
         }
       }
-      console.log("index: " + index);
       self.models[index].similar = true;
     },
     // 画像＋解析データ取得
@@ -378,7 +355,7 @@ export default {
         selected
       );
       self.getSignedUrl(self.awsS3.bucket, self.s3Image[index].path, 60);
-      self.getAnalysisData();
+      self.getAnalysisData(self.s3Image[index].path);
     }
   }
 };
