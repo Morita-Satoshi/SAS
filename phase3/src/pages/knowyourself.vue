@@ -92,7 +92,7 @@ export default {
       },
       // AWS S3情報
       awsS3: {
-        bucket: "sas-noboru-upload",
+        bucket: "sas-noboru-analysis",
         region: "ap-northeast-1"
       },
       // 見本の情報
@@ -245,7 +245,8 @@ export default {
       var self = this;
       var unixTime = self.getUnixTime(filepath);
       var time = self.convertUnixTimeToTime(unixTime);
-      return userName + "_" + time;
+      //return userName + "_" + time;
+      return time;
     },
     // Unix時間の取得
     getUnixTime: function(filepath) {
