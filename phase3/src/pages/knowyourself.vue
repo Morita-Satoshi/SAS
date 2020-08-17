@@ -336,8 +336,8 @@ export default {
       var value = -1
       var index = 0;
       for (let i = 0; i < data.length; i++) {
-        if (value < data[i]) {
-          value = data[i];
+        if (value < parseFloat(data[i])) {
+          value = parseFloat(data[i]);
           index = i;
         }
       }
