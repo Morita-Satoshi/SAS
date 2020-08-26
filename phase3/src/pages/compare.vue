@@ -72,29 +72,29 @@
       <div class="align-center">
         <v-subheader>どの部分に関しての感想か選ぼう</v-subheader>
         <v-row>
-          <v-col cols="4">
-            <v-card v-on:click="motion=1;setAnalysisImage(1)">
-              <img :src="displayImages[0].tab" class="resize-for-mobile" />
+          <v-col cols="2">
+            <v-card v-on:click="motion=1;setAnalysisImage(1)" height="100%">
+              <v-img :src="displayImages[0].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
-          <v-col cols="4">
-            <v-card v-on:click="motion=2">
-              <img :src="displayImages[1].tab" class="resize-for-mobile" />
+          <v-col cols="2">
+            <v-card v-on:click="motion=2;setAnalysisImage(2)" height="100%">
+              <v-img :src="displayImages[1].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
-          <v-col cols="4">
-            <v-card v-on:click="motion=3">
-              <img :src="displayImages[2].tab" class="resize-for-mobile" />
+          <v-col cols="2">
+            <v-card v-on:click="motion=3;setAnalysisImage(3)" height="100%">
+              <v-img :src="displayImages[2].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
-          <v-col cols="4">
-            <v-card v-on:click="motion=4">
-              <img :src="displayImages[3].tab" class="resize-for-mobile" />
+          <v-col cols="2">
+            <v-card v-on:click="motion=4;setAnalysisImage(4)" height="100%">
+              <v-img :src="displayImages[3].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
-          <v-col cols="4">
-            <v-card v-on:click="motion=5">
-              <img :src="displayImages[4].tab" class="resize-for-mobile" />
+          <v-col cols="2">
+            <v-card v-on:click="motion=5" height="100%">
+              <v-img :src="displayImages[4].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
         </v-row>
@@ -103,21 +103,18 @@
         <v-col cols="6">
         <div v-if="analysisImage[0].url != null">
           <v-img :src="analysisImage[0].url"/>
-          <p v-if="analysisImageAngle[0].angle !=null">{{"肘の角度に注目" + analysisImageAngle[0].angle + "度"}} </p>
+          <p v-if="analysisImageAngle[0].angle !=null">{{"肘の角度に注目" + Math.round(analysisImageAngle[0].angle) + "度"}} </p>
         </div>
         </v-col>
         <v-col cols="6">
         <div v-if="analysisImage[1].url != null">
           <v-img :src="analysisImage[1].url"/>
-          <p v-if="analysisImageAngle[1].angle !=null">{{"肘の角度に注目" + analysisImageAngle[1].angle + "度"}} </p>
+          <p v-if="analysisImageAngle[1].angle !=null">{{"肘の角度に注目" + Math.round(analysisImageAngle[1].angle) + "度"}} </p>
         </div>
         </v-col>
         </v-row>
         <!-- 差分で得点を表示 -->
-        <div v-if="analysisImageAngle[0].angle !=null && analysisImageAngle[1].angle !=null">
-          <!-- TODO:ここに処理追加 -->
         </div>
-
         <v-card-text>
           <v-row>
             <v-col cols="12" md="6" class="pr-4">
@@ -264,8 +261,7 @@ export default {
     setAnalysisImage: function(sceneNum){
       var self = this;
 
-      if (self.chosenMovieName.movie1 == null || self.chosenMovieName.movie1 == null){
-        //TODO:error handling
+      if (!self.chosenMovieName.movie1 || !self.chosenMovieName.movie2){
         return
       }
 
@@ -291,13 +287,13 @@ export default {
       var dir2 = this.chosenMovieName.movie2.split("/")
       var user2 = dir2[1]
       var datetimeScene2 = dir2[2].split(".")[0]+"_"+sceneNum
-      self.getAnalysisInformation(user,datetimeScene2,1)
+      self.getAnalysisInformation(user2,datetimeScene2,1)
     },
     getAnalysisInformation: function(user,datetime,which) {
       var self = this;
       api.get("/scene-angle?datetime_scene="+datetime+"&user="+user).then(resp => {
         self.analysisImageAngle[which].angle = resp['data']['angle']
-      });
+      }).catch(err=> {return} );
     },
     // S3アクセス用インスタンス取得
     getS3Instance: function() {
