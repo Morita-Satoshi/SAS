@@ -99,14 +99,20 @@
           </v-col>
         </v-row>
         <!-- フォームの切り出しを表示 -->
+        <v-row>
+        <v-col cols="6">
         <div v-if="analysisImage[0].url != null">
-          <img :src="analysisImage[0].url" class="resize-for-mobile" />
-          <p v-if="analysisImageAngle[0].angle !=null">{{analysisImageAngle[0].angle}} </p>
+          <v-img :src="analysisImage[0].url"/>
+          <p v-if="analysisImageAngle[0].angle !=null">{{"肘の角度に注目" + analysisImageAngle[0].angle + "度"}} </p>
         </div>
+        </v-col>
+        <v-col cols="6">
         <div v-if="analysisImage[1].url != null">
-          <img :src="analysisImage[1].url" class="resize-for-mobile" />
-          <p v-if="analysisImageAngle[1].angle !=null">{{analysisImageAngle[1].angle}} </p>
+          <v-img :src="analysisImage[1].url"/>
+          <p v-if="analysisImageAngle[1].angle !=null">{{"肘の角度に注目" + analysisImageAngle[1].angle + "度"}} </p>
         </div>
+        </v-col>
+        </v-row>
         <!-- 差分で得点を表示 -->
         <div v-if="analysisImageAngle[0].angle !=null && analysisImageAngle[1].angle !=null">
           <!-- TODO:ここに処理追加 -->
