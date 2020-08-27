@@ -27,15 +27,6 @@
           </select>
         </div>
       </div>
-      <div>
-        <button
-          type="button"
-          style="border: 1px solid red"
-          class="v-btn vv-btn--contained v-size--large theme-light"
-          @click="getBornMovie(0)"
-          v-show="(movieData[0].url != null && existBornMovie[0].url) == true"
-        >{{message.getBornMovie}}</button>
-      </div>
       <!-- 1つ目のMovieの表示領域 [E] -->
       <!-- 2つ目のMovieの表示領域 [S] -->
       <div>
@@ -63,15 +54,6 @@
           </select>
         </div>
       </div>
-      <div>
-        <button
-          type="button"
-          style="border: 1px solid red"
-          class="v-btn vv-btn--contained v-size--large theme-light"
-          @click="getBornMovie(1)"
-          v-show="(movieData[1].url != null && existBornMovie[1].url) == true"
-        >{{message.getBornMovie}}</button>
-      </div>
       <!-- 2つ目のMovieの表示領域 [E] -->
       <!-- 再生/停止ボタン表示領域 [S] -->
       <div v-show="(movieData[0].url != null && movieData[1].url != null) == true">
@@ -90,36 +72,55 @@
       <div class="align-center">
         <v-subheader>どの部分に関しての感想か選ぼう</v-subheader>
         <v-row>
-          <v-col cols="4">
-            <v-card v-on:click="motion=1">
-              <img :src="displayImages[0].tab" class="resize-for-mobile" />
+          <v-col cols="2">
+            <v-card v-on:click="motion=1;setAnalysisImage(1)" height="100%">
+              <v-img :src="displayImages[0].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
-          <v-col cols="4">
-            <v-card v-on:click="motion=2">
-              <img :src="displayImages[1].tab" class="resize-for-mobile" />
+          <v-col cols="2">
+            <v-card v-on:click="motion=2;setAnalysisImage(2)" height="100%">
+              <v-img :src="displayImages[1].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
-          <v-col cols="4">
-            <v-card v-on:click="motion=3">
-              <img :src="displayImages[2].tab" class="resize-for-mobile" />
+          <v-col cols="2">
+            <v-card v-on:click="motion=3;setAnalysisImage(3)" height="100%">
+              <v-img :src="displayImages[2].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
-          <v-col cols="4">
-            <v-card v-on:click="motion=4">
-              <img :src="displayImages[3].tab" class="resize-for-mobile" />
+          <v-col cols="2">
+            <v-card v-on:click="motion=4;setAnalysisImage(4)" height="100%">
+              <v-img :src="displayImages[3].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
-          <v-col cols="4">
-            <v-card v-on:click="motion=5">
-              <img :src="displayImages[4].tab" class="resize-for-mobile" />
+          <v-col cols="2">
+            <v-card v-on:click="motion=5" height="100%">
+              <v-img :src="displayImages[4].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
         </v-row>
+        <!-- フォームの切り出しを表示 -->
+        <v-row>
+        <v-col cols="6">
+        <div v-if="analysisImage[0].url != null">
+          <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[0].score)+"点"}} </p>
+          <v-img :src="analysisImage[0].url"/>
+          <p v-if="analysisImageAngle[0].angle !=null">{{backFormComment()+ Math.round(analysisImageAngle[0].angle) + "度"}} </p>
+        </div>
+        </v-col>
+        <v-col cols="6">
+        <div v-if="analysisImage[1].url != null">
+          <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[1].score)+"点"}} </p>
+          <v-img :src="analysisImage[1].url"/>
+          <p v-if="analysisImageAngle[1].angle !=null">{{backFormComment() + Math.round(analysisImageAngle[1].angle) + "度"}} </p>
+        </div>
+        </v-col>
+        </v-row>
+        <!-- 差分で得点を表示 -->
+        </div>
         <v-card-text>
           <v-row>
             <v-col cols="12" md="6" class="pr-4">
-              <v-text-field label="得点を入力しよう" type="number" v-model="userScore" />
+              <v-text-field label="自分が思った得点を入力しよう" type="number" v-model="userScore" />
               </v-text-field>
             </v-col>
           </v-row>
@@ -160,7 +161,6 @@ export default {
         {
           // フォルダ名 folderName
           // 動画パス path
-          // 骨動画パス bornPath
         }
       ],
       // UI表示情報
@@ -178,6 +178,7 @@ export default {
       // AWS S3情報
       awsS3: {
         bucket: "sas-noboru-upload",
+        analysisBucket:"sas-noboru-analysis",
         region: "ap-northeast-1"
       },
       // 見本の情報
@@ -189,7 +190,6 @@ export default {
       // ログインユーザー名
       loginUserName: null,
       // 骨動画ファイルPostFix
-      bornMovieNamePostFix: "_Born",
       // 動画ファイル拡張子(小文字で定義)
       movieExtension: ".mov",
       // メッセージリスト
@@ -199,11 +199,15 @@ export default {
         getMovie: "動画取得",
         playMovie: "動画再生",
         pauseMovie: "動画停止",
-        getBornMovie: "骨動画取得"
+      },
+      //選択されているファイル名
+      chosenMovieName:{
+        movie1:"",
+        movie2:"",
       },
       movieData: [{ url: null }, { url: null }],
-      existBornMovie: [{ url: false }, { url: false }],
-      bornMovie: [{ timer: null }, { timer: null }],
+      analysisImage: [{ url: null }, { url: null }],
+      analysisImageAngle: [{ angle: null,score:null }, { angle: null,score:null }],
       retry: 0,
       maxRetry: 50,
       motion: 0,
@@ -256,6 +260,59 @@ export default {
         IdentityPoolId: store.getters["user/identityID"]
       });
     },
+    backFormComment: function(){
+      switch(this.motion){
+        case 1:
+          return "軸足の膝から肩の角度:"
+        case 2:
+          return "投球肘の角度:"
+        case 3:
+          return "軸足から肩にかける背中の角度:"
+        case 4:
+          return "投球肘の角度:"
+        case 5:
+        default:
+          break;
+      }
+    },
+    setAnalysisImage: function(sceneNum){
+      var self = this;
+
+      if (!self.chosenMovieName.movie1 || !self.chosenMovieName.movie2){
+        return
+      }
+
+      //uploads/トリミング
+      var path1 = this.chosenMovieName.movie1.split("/")
+      var sceneFileName1 = path1[1]+"/"+path1[2].split(".")[0] + "_" + sceneNum + ".jpg"
+      var path2 = this.chosenMovieName.movie2.split("/")
+      var sceneFileName2 = path2[1]+"/"+path2[2].split(".")[0] + "_" + sceneNum + ".jpg"
+
+      //解析画像1をセット
+      self.getSignedUrlForImage(self.awsS3.analysisBucket, sceneFileName1, 60,0)
+      //解析画像2をセット
+      self.getSignedUrlForImage(self.awsS3.analysisBucket, sceneFileName2, 60,1)
+
+      //解析画像の角度情報設定
+      //analysisImageAngle.angleに値をセット
+      //uploads/xxxx/xxxx.jpgがファイル構成
+      var dir = this.chosenMovieName.movie1.split("/")
+      var user = dir[1]
+      var datetimeScene1 = dir[2].split(".")[0]+"_"+sceneNum
+      self.getAnalysisInformation(user,datetimeScene1,0)
+
+      var dir2 = this.chosenMovieName.movie2.split("/")
+      var user2 = dir2[1]
+      var datetimeScene2 = dir2[2].split(".")[0]+"_"+sceneNum
+      self.getAnalysisInformation(user2,datetimeScene2,1)
+    },
+    getAnalysisInformation: function(user,datetime,which) {
+      var self = this;
+      api.get("/scene-angle?datetime_scene="+datetime+"&user="+user).then(resp => {
+        self.analysisImageAngle[which].angle = resp['data']['angle']
+        self.analysisImageAngle[which].score = resp['data']['score']
+      }).catch(err=> {return} );
+    },
     // S3アクセス用インスタンス取得
     getS3Instance: function() {
       var self = this;
@@ -295,19 +352,15 @@ export default {
       // 見本の動画リストをチェック
       self.models.forEach(item => {
         if (
-          filepath.indexOf(item.folderName) !== -1 &&
-          filepath.indexOf(self.bornMovieNamePostFix) === -1
+          filepath.indexOf(item.folderName) !== -1
         ) {
           console.log("filepath: " + filepath);
           var movieName = self.getMovieName(item.userName, filepath);
-          var bornMovieFilePath = self.getBornMovieName(filepath);
           console.log("movieName: " + movieName);
-          console.log("bornMovieFilePath: " + bornMovieFilePath);
           // 動画パスを格納
           self.s3Movie.push({
             folderName: item.folderName,
             path: filepath,
-            bornPath: bornMovieFilePath
           });
           self.uiDisplay.push({
             userName: item.userName,
@@ -323,18 +376,14 @@ export default {
       console.log("loginUserName: " + self.loginUserName);
       // ログインユーザーのチェック
       if (
-        filepath.indexOf(self.loginUserName) !== -1 &&
-        filepath.indexOf(self.bornMovieNamePostFix) === -1
+        filepath.indexOf(self.loginUserName) !== -1 
       ) {
         console.log("filepath: " + filepath);
         var movieName = self.getMovieName(self.loginUserName, filepath);
-        var bornMovieFilePath = self.getBornMovieName(filepath);
         console.log("movieName: " + movieName);
-        console.log("bornMovieFilePath: " + bornMovieFilePath);
         self.s3Movie.push({
           folderName: self.loginUserName,
           path: filepath,
-          bornPath: bornMovieFilePath
         });
         self.uiDisplay.push({
           userName: self.loginUserName,
@@ -372,17 +421,6 @@ export default {
       console.log("time: " + time);
       return userName + "_" + time;
     },
-    getBornMovieName: function(filepath) {
-      console.log("getBornMovieName filepath: " + filepath);
-      var self = this;
-      var pattern = /(.+)(\.[^.]+$)/;
-      var bornFilePath =
-        filepath.match(pattern)[1] +
-        self.bornMovieNamePostFix +
-        self.movieExtension;
-      console.log("bornfilePath: " + bornFilePath);
-      return bornFilePath;
-    },
     // Unix時間の取得
     getUnixTime: function(filepath) {
       console.log("getTime filepath: " + filepath);
@@ -412,6 +450,26 @@ export default {
         ":" +
         second;
       return time;
+    },
+    getSignedUrlForImage:function(bucket, key, expires,which) {
+      var self = this;
+      var s3 = self.getS3Instance();
+      const signedUrl = s3.getSignedUrl(
+        "getObject",
+        {
+          Bucket: bucket,
+          Key: key,
+          Expires: expires
+        },
+        (err, signedUrl) => {
+          if (err) {
+            console.log("getSignedUrl err: " + err);
+          } else {
+            console.log("getSignedUrl success: " + signedUrl);
+            self.analysisImage[which].url = signedUrl;
+          }
+        }
+      );
     },
     // getSignedUrlラッパー
     getSignedUrl: function(bucket, key, expires, which) {
@@ -459,61 +517,13 @@ export default {
         "movieName",
         selected
       );
+      //選択しているファイル名を取得
+      if (which==0){
+        self.chosenMovieName.movie1 = self.s3Movie[index].path
+      }else if (which==1){
+        self.chosenMovieName.movie2 = self.s3Movie[index].path
+      }
       self.getSignedUrl(self.awsS3.bucket, self.s3Movie[index].path, 60, which);
-      self.checkBornMovie(
-        self.awsS3.bucket,
-        self.s3Movie[index].bornPath,
-        which
-      );
-    },
-    // 骨動画取得
-    getBornMovie: function(which) {
-      console.log("getBornMovie which: " + which);
-      var self = this;
-      var selected = which == 0 ? self.selected.movie1 : self.selected.movie2;
-      console.log("getBornMovie selected: " + selected);
-      var index = self.getIndexFromObjectArray(
-        self.uiDisplay,
-        "movieName",
-        selected
-      );
-      self.getSignedUrl(self.awsS3.bucket, self.s3Movie[index].bornPath, 600, which);
-    },
-    // 骨動画有無チェック
-    checkBornMovie: function(bucket, key, which) {
-      console.log(
-        "checkBornMovie bucket: " + bucket + " key: " + key + " which: " + which
-      );
-      var self = this;
-      var bucket = bucket;
-      var key = key;
-      var which = which;
-      var s3 = self.getS3Instance();
-      var params = {
-        Bucket: bucket,
-        Key: key
-      };
-      s3.getObject(params, function(error, data) {
-        if (error) {
-          console.log("getObject Err: " + error);
-          //        clearTimeout(self.bornMovie[which].timer);
-          self.existBornMovie[which].url = false;
-          console.log(
-            "bucket: " + bucket + " key: " + key + " which: " + which
-          );
-          self.retry++;
-          if (self.retry < self.maxRetry) {
-            self.checkBornMovie(bucket, key, which);
-          } else {
-            self.retry = 0;
-          }
-        } else {
-          console.log("getObject Success which: " + which);
-          //clearInterval(self.bornMovie[which].timer);
-          self.existBornMovie[which].url = true;
-          self.retry = 0;
-        }
-      });
     },
     // 一括動画再生
     playMovie: function() {
@@ -602,5 +612,12 @@ img.resize_image.right_image {
 img.resize-for-mobile {
   width: 60px;
   height: 60px;
+}
+.score-charactor{
+  text-align:center;
+  font-weight: bold;
+  font-size: larger;
+  color: blue;
+
 }
 </style>
