@@ -102,14 +102,16 @@
         <v-row>
         <v-col cols="6">
         <div v-if="analysisImage[0].url != null">
+          <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[0].score)+"点"}} </p>
           <v-img :src="analysisImage[0].url"/>
-          <p v-if="analysisImageAngle[0].angle !=null">{{"肘の角度に注目" + Math.round(analysisImageAngle[0].angle) + "度"}} </p>
+          <p v-if="analysisImageAngle[0].angle !=null">{{backFormComment()+ Math.round(analysisImageAngle[0].angle) + "度"}} </p>
         </div>
         </v-col>
         <v-col cols="6">
         <div v-if="analysisImage[1].url != null">
+          <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[1].score)+"点"}} </p>
           <v-img :src="analysisImage[1].url"/>
-          <p v-if="analysisImageAngle[1].angle !=null">{{"肘の角度に注目" + Math.round(analysisImageAngle[1].angle) + "度"}} </p>
+          <p v-if="analysisImageAngle[1].angle !=null">{{backFormComment() + Math.round(analysisImageAngle[1].angle) + "度"}} </p>
         </div>
         </v-col>
         </v-row>
@@ -118,7 +120,7 @@
         <v-card-text>
           <v-row>
             <v-col cols="12" md="6" class="pr-4">
-              <v-text-field label="得点を入力しよう" type="number" v-model="userScore" />
+              <v-text-field label="自分が思った得点を入力しよう" type="number" v-model="userScore" />
               </v-text-field>
             </v-col>
           </v-row>
@@ -205,7 +207,7 @@ export default {
       },
       movieData: [{ url: null }, { url: null }],
       analysisImage: [{ url: null }, { url: null }],
-      analysisImageAngle: [{ angle: null }, { angle: null }],
+      analysisImageAngle: [{ angle: null,score:null }, { angle: null,score:null }],
       retry: 0,
       maxRetry: 50,
       motion: 0,
@@ -258,6 +260,21 @@ export default {
         IdentityPoolId: store.getters["user/identityID"]
       });
     },
+    backFormComment: function(){
+      switch(this.motion){
+        case 1:
+          return "右肩、右尻、右ひざの角度:"
+        case 2:
+          return "右手首、右肘、右肩の角度:"
+        case 3:
+          return "右ひざ、右尻、右ひざの角度:"
+        case 4:
+          return "右手首、右肘、右肩の角度:"
+        case 5:
+        default:
+          break;
+      }
+    },
     setAnalysisImage: function(sceneNum){
       var self = this;
 
@@ -293,6 +310,7 @@ export default {
       var self = this;
       api.get("/scene-angle?datetime_scene="+datetime+"&user="+user).then(resp => {
         self.analysisImageAngle[which].angle = resp['data']['angle']
+        self.analysisImageAngle[which].score = resp['data']['score']
       }).catch(err=> {return} );
     },
     // S3アクセス用インスタンス取得
@@ -594,5 +612,12 @@ img.resize_image.right_image {
 img.resize-for-mobile {
   width: 60px;
   height: 60px;
+}
+.score-charactor{
+  text-align:center;
+  font-weight: bold;
+  font-size: larger;
+  color: blue;
+
 }
 </style>
