@@ -263,13 +263,13 @@ export default {
     backFormComment: function(){
       switch(this.motion){
         case 1:
-          return "右肩、右尻、右ひざの角度:"
+          return "軸足の膝から肩の角度:"
         case 2:
-          return "右手首、右肘、右肩の角度:"
+          return "投球肘の角度:"
         case 3:
-          return "右ひざ、右尻、右ひざの角度:"
+          return "軸足から肩にかける背中の角度:"
         case 4:
-          return "右手首、右肘、右肩の角度:"
+          return "投球肘の角度:"
         case 5:
         default:
           break;
