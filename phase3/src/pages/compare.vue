@@ -59,12 +59,12 @@
       <div v-show="(movieData[0].url != null && movieData[1].url != null) == true">
         <button
           type="button"
-          class="v-btn vv-btn--contained v-size--large theme-light"
+          class="v-btn v-btn--contained v-size--large theme-light"
           @click="playMovie"
         >{{message.playMovie}}</button>
         <button
           type="button"
-          class="v-btn vv-btn--contained v-size--large theme-light"
+          class="v-btn v-btn--contained v-size--large theme-light"
           @click="pauseMovie"
         >{{message.pauseMovie}}</button>
       </div>
@@ -93,26 +93,34 @@
             </v-card>
           </v-col>
           <v-col cols="2">
-            <v-card v-on:click="motion=5" height="100%">
+            <v-card v-on:click="motion=5;clearAnalysisImage()" height="100%">
               <v-img :src="displayImages[4].tab" class="resize-for-mobile" />
             </v-card>
           </v-col>
         </v-row>
         <!-- フォームの切り出しを表示 -->
         <v-row>
-        <v-col cols="6">
-        <div v-if="analysisImage[0].url != null">
+        <v-col cols="6" v-if="analysisImage[0].url != null">
           <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[0].score)+"点"}} </p>
-          <v-img :src="analysisImage[0].url"/>
+          <v-img id="sceneImage0" :src="analysisImage[0].url"/>
           <p v-if="analysisImageAngle[0].angle !=null">{{backFormComment()+ Math.round(analysisImageAngle[0].angle) + "度"}} </p>
-        </div>
+          <!-- 骨格表示ボタン -->
+          <!-- <button
+            type="button"
+            class="v-btn v-btn--contained v-size--large"
+            @click="drawBoneLine()"
+          >ほねをみよう</button> -->
         </v-col>
-        <v-col cols="6">
-        <div v-if="analysisImage[1].url != null">
+        <v-col cols="6" v-if="analysisImage[1].url != null">
           <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[1].score)+"点"}} </p>
-          <v-img :src="analysisImage[1].url"/>
+          <v-img id="sceneImage1" :src="analysisImage[1].url"/>
           <p v-if="analysisImageAngle[1].angle !=null">{{backFormComment() + Math.round(analysisImageAngle[1].angle) + "度"}} </p>
-        </div>
+          <!-- 骨格表示ボタン -->
+          <!-- <button
+            type="button"
+            class="v-btn v-btn--contained v-size--large"
+            @click="drawBoneLine()"
+          >ほねをみよう</button> -->
         </v-col>
         </v-row>
         <!-- 差分で得点を表示 -->
@@ -275,6 +283,15 @@ export default {
           break;
       }
     },
+    clearAnalysisImage: function(){
+      var self = this;
+      self.analysisImage[0].url = null 
+      self.analysisImage[1].url = null
+      self.analysisImageAngle[0].angle = null 
+      self.analysisImageAngle[0].score = null 
+      self.analysisImageAngle[1].angle = null
+      self.analysisImageAngle[1].score = null
+    },
     setAnalysisImage: function(sceneNum){
       var self = this;
 
@@ -305,6 +322,30 @@ export default {
       var user2 = dir2[1]
       var datetimeScene2 = dir2[2].split(".")[0]+"_"+sceneNum
       self.getAnalysisInformation(user2,datetimeScene2,1)
+    },
+    drawBoneLine: function(){
+      //骨格テスト
+      let image = new Image;
+      image.crossOrigin = "Anonymous"
+      alert(document.getElementById('sceneImage0'))
+      image.src=document.getElementById('sceneImage0')
+      let canvas = document.createElement("canvas");
+      let context = canvas.getContext("2d");
+ 
+      alert("image info")
+      alert(image.width)
+      alert(image.height)
+      canvas.width  = image.width;
+      canvas.height = image.height;
+
+      context.drawImage(image, 0, 0);
+      // test
+      context.fillRect(25,25,100,100)
+
+      const file = canvas.toDataURL("image/jpeg");
+      
+    },
+    imageLoaded:function(){
     },
     getAnalysisInformation: function(user,datetime,which) {
       var self = this;
