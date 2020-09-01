@@ -12,7 +12,7 @@
           playsinline
           controls
         ></video>
-        <v-row justify-center>
+        <v-row justify="center">
           <v-col cols="12" sm="6">
           <select
             class="cp_ipselect cp_sl04"
@@ -43,7 +43,7 @@
           controls
         ></video>
         <div>
-        <v-row justify-center>
+        <v-row justify="center">
           <v-col cols="12" sm="6">
           <select
             class="cp_ipselect cp_sl04"
@@ -78,7 +78,7 @@
       <!-- 採点パート -->
       <div class="align-center">
         <v-subheader>どの部分に関しての感想か選ぼう</v-subheader>
-        <v-row justify-center>
+        <v-row justify="center">
           <v-col cols="2">
             <v-card v-on:click="motion=1;setAnalysisImage(1)" height="100%">
               <v-img :src="displayImages[0].tab" class="resize-for-mobile" />
@@ -106,7 +106,7 @@
           </v-col>
         </v-row>
         <!-- フォームの切り出しを表示 -->
-        <v-row justify-center>
+        <v-row justify="center">
         <v-col cols="6" v-if="analysisImage[0].url != null">
           <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{Math.round(analysisImageAngle[0].score)+"点"}} </p>
           <v-img id="sceneImage0" :src="analysisImage[0].url"/>
@@ -133,7 +133,7 @@
         <!-- 差分で得点を表示 -->
         </div>
         <v-card-text>
-          <v-row justify-center>
+        <v-row justify="center">
             <v-col cols="12" md="6" class="pr-4">
               <v-text-field label="自分が思った得点を入力しよう" type="number" v-model="userScore" />
               </v-text-field>
