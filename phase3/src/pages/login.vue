@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-container>
+    <v-container class="bg">
       <v-layout align-center justify-center fill-height>
         <v-flex xs12 sm6 lg4>
           <v-card @keydown.enter="login()">
@@ -32,31 +32,32 @@
                   ></v-text-field>
                 </v-layout>
                 <v-layout row wrap>
-                  <v-switch color="primary" v-model="remember" label="ログイン情報を記憶する"></v-switch>
+                  <v-switch
+                    color="primary"
+                    v-model="remember"
+                    label="ログイン情報を記憶する"
+                  ></v-switch>
                 </v-layout>
 
                 <v-layout row wrap>
                   <v-flex xs12>
                     <v-alert v-if="error" :value="true" type="error">
-                      {{
-                      error
-                      }}
+                      {{ error }}
                     </v-alert>
                   </v-flex>
                 </v-layout>
 
-                <v-layout row wrap justify-end>
+                <v-layout row wrap justify-center>
                   <v-btn
                     color="primary"
                     @keydown="login"
                     :disabled="!valid || loggingin"
                     @click="login"
                     :loading="loggingin"
-                  >ログイン</v-btn>
+                    >ログイン</v-btn
+                  >
                 </v-layout>
-                <v-layout row wrap justify-center>
-                  <!-- TODO ロゴの挿入 -->
-                </v-layout>
+                <v-layout row wrap justify-center> </v-layout>
               </v-form>
             </v-container>
           </v-card>
@@ -75,7 +76,7 @@ export default {
   layout: "blank",
   head() {
     return {
-      title: "ログイン"
+      title: "ログイン",
     };
   },
   data() {
@@ -85,16 +86,16 @@ export default {
       password: "",
       remember: false,
       error: null,
-      loggingin: false
+      loggingin: false,
     };
   },
   computed: {
     valid() {
       return this.username != "" && this.password != "";
-    }
+    },
   },
   methods: {
-    getCookieVal: function(key) {
+    getCookieVal: function (key) {
       const record = document.cookie.split("; ");
       for (let index in record) {
         let param = record[index].split("=");
@@ -104,7 +105,7 @@ export default {
       }
     },
 
-    loadCookie: function() {
+    loadCookie: function () {
       if (document.cookie) {
         this.username = this.getCookieVal("username");
         this.password = this.getCookieVal("password");
@@ -112,7 +113,7 @@ export default {
       }
     },
 
-    setCookie: function() {
+    setCookie: function () {
       if (this.remember) {
         const saveSecond = 60 * 60 * 24 * config.cookieRememberDay;
         document.cookie = `username=${this.username}; max-age=${saveSecond};`;
@@ -137,7 +138,7 @@ export default {
       this.$store
         .dispatch("user/login", {
           username: this.username,
-          password: this.password
+          password: this.password,
         })
         .then(() => {
           // async authentication
@@ -146,7 +147,7 @@ export default {
           console.log("login success");
           this.$router.push("/");
         })
-        .catch(error => {
+        .catch((error) => {
           // login error
           if (error.response) {
             if (error.response.status == 401)
@@ -158,7 +159,7 @@ export default {
           } else this.error = error;
           this.loggingin = false;
         });
-    }
+    },
   },
   created() {
     if (this.$store.getters["user/authenticated"] == true) {
@@ -173,6 +174,17 @@ export default {
       }
       this.ready = true;
     }
-  }
+  },
 };
 </script>
+<style>
+.bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-size: cover;
+  background-image: url("~@/static/top.jpg");
+}
+</style>
