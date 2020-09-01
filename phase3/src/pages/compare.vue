@@ -100,27 +100,35 @@
         </v-row>
         <!-- フォームの切り出しを表示 -->
         <v-row>
+        <v-col cols="6">
+          <canvas id="sceneImage0" />
+        </v-col>
+        <v-col cols="6">
+          <canvas id="sceneImage1" />
+        </v-col>
+        </v-row>
+        <v-row>
         <v-col cols="6" v-if="analysisImage[0].url != null">
           <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[0].score)+"点"}} </p>
-          <v-img id="sceneImage0" :src="analysisImage[0].url"/>
+          <!-- <v-img id="sceneImage0" :src="analysisImage[0].url"/> -->
           <p v-if="analysisImageAngle[0].angle !=null">{{backFormComment()+ Math.round(analysisImageAngle[0].angle) + "度"}} </p>
-          <!-- 骨格表示ボタン -->
-          <!-- <button
+          <!-- 骨格表示ボタン --> 
+          <button
             type="button"
             class="v-btn v-btn--contained v-size--large"
-            @click="drawBoneLine()"
-          >ほねをみよう</button> -->
+            @click="drawBoneLine(1)"
+          >ほねをみよう</button>
         </v-col>
         <v-col cols="6" v-if="analysisImage[1].url != null">
           <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[1].score)+"点"}} </p>
-          <v-img id="sceneImage1" :src="analysisImage[1].url"/>
+          <!-- <v-img id="sceneImage1" :src="analysisImage[1].url"/> -->
           <p v-if="analysisImageAngle[1].angle !=null">{{backFormComment() + Math.round(analysisImageAngle[1].angle) + "度"}} </p>
           <!-- 骨格表示ボタン -->
-          <!-- <button
+          <button
             type="button"
             class="v-btn v-btn--contained v-size--large"
-            @click="drawBoneLine()"
-          >ほねをみよう</button> -->
+            @click="drawBoneLine(2)"
+          >ほねをみよう</button>
         </v-col>
         </v-row>
         <!-- 差分で得点を表示 -->
@@ -152,6 +160,11 @@ import Vue from "vue";
 import Loading from "vue-loading-overlay";
 // Import stylesheet
 import "vue-loading-overlay/dist/vue-loading.css";
+
+const BONE_COLOR   = 'rgba(255, 179, 46,1.0)';
+const BONE_LINE_COLOR   = 'rgba(255, 91, 0,1.0)';
+const BONE_WIDTH   = 5;
+const VERTEX_POINT_RADIUS = 4;
 // Init plugin
 Vue.use(Loading);
 import api from "../store/api";
@@ -216,6 +229,15 @@ export default {
       movieData: [{ url: null }, { url: null }],
       analysisImage: [{ url: null }, { url: null }],
       analysisImageAngle: [{ angle: null,score:null }, { angle: null,score:null }],
+      sceneInfomation1:[{datetime_scene:null,user:null},{datetime_scene:null,user:null},{datetime_scene:null,user:null},{datetime_scene:null,user:null},{datetime:null,user:null}],
+      sceneInfomation2:[{datetime_scene:null,user:null},{datetime_scene:null,user:null},{datetime_scene:null,user:null},{datetime_scene:null,user:null},{datetime:null,user:null}],
+      currentChoseScene:null,
+      canvas1:null,
+      canvas2:null,
+      context1:null,
+      context2:null,
+      image1:null,
+      image2:null,
       retry: 0,
       maxRetry: 50,
       motion: 0,
@@ -295,10 +317,28 @@ export default {
     setAnalysisImage: function(sceneNum){
       var self = this;
 
+      //canvas
+      self.image1 = new Image;
+      self.image2 = new Image;
+      self.image1.crossOrigin = "Anonymous"
+      self.image2.crossOrigin = "Anonymous"
+
+      self.canvas1 = document.getElementById("sceneImage0");
+      self.canvas2 = document.getElementById("sceneImage1");
+      self.context1 = self.canvas1.getContext("2d");
+      self.context2 = self.canvas2.getContext("2d");
+
+      self.canvas1.width=self.image1.width
+      self.canvas1.height=self.image1.height
+      self.canvas2.width=self.image2.width
+      self.canvas2.height=self.image2.height
+
       if (!self.chosenMovieName.movie1 || !self.chosenMovieName.movie2){
         return
       }
 
+      //現在選択中のシーンを保存
+      self.currentChoseScene = sceneNum
       //uploads/トリミング
       var path1 = this.chosenMovieName.movie1.split("/")
       var sceneFileName1 = path1[1]+"/"+path1[2].split(".")[0] + "_" + sceneNum + ".jpg"
@@ -322,28 +362,74 @@ export default {
       var user2 = dir2[1]
       var datetimeScene2 = dir2[2].split(".")[0]+"_"+sceneNum
       self.getAnalysisInformation(user2,datetimeScene2,1)
+
+      //sceneのKeyを保存
+      self.sceneInfomation1[sceneNum-1].datetime_scene = datetimeScene1
+      self.sceneInfomation1[sceneNum-1].user = user
+      self.sceneInfomation2[sceneNum-1].datetime_scene = datetimeScene2
+      self.sceneInfomation2[sceneNum-1].user = user2
     },
-    drawBoneLine: function(){
+    drawBoneLine: function(which){
+      var self =this
       //骨格テスト
-      let image = new Image;
-      image.crossOrigin = "Anonymous"
-      alert(document.getElementById('sceneImage0'))
-      image.src=document.getElementById('sceneImage0')
-      let canvas = document.createElement("canvas");
-      let context = canvas.getContext("2d");
- 
-      alert("image info")
-      alert(image.width)
-      alert(image.height)
-      canvas.width  = image.width;
-      canvas.height = image.height;
+      //TODO:fileName=extentionを除いたもの user画像の選択中のもの
+      let datetime_frame = null
+      let user = null 
+      if (which ==0){
+        datetime_frame = self.sceneInfomation1[self.currentChoseScene-1].datetime_scene
+        user = self.sceneInfomation1[self.currentChoseScene-1].user
+      }else{
+        datetime_frame = self.sceneInfomation2[self.currentChoseScene-1].datetime_scene
+        user = self.sceneInfomation2[self.currentChoseScene-1].user
+      }
+      api.get("/born-data?datetime_frame="+datetime_frame+"&user="+user).then(resp => {
+        context.strokeStyle = BONE_COLOR;
+        context.fillStyle = BONE_LINE_COLOR;
+        context.lineWidth = BONE_WIDTH;
+        let joints = resp['data']
+        this.draw_bone(context,joints, ['neck', 'l_shoulder', 'l_elbow', 'l_wrist']);
+        this.draw_bone(context,joints, ['l_hip', 'l_knee', 'l_ankle']);
+        this.draw_bone(context,joints, ['nose', 'l_eye', 'l_ear']);
+        this.draw_bone(context,joints, ['l_shoulder', 'l_hip']);
+        this.draw_bone(context,joints, ['neck', 'r_shoulder', 'r_elbow', 'r_wrist']);
+        this.draw_bone(context,joints, ['r_hip', 'r_knee', 'r_ankle']);
+        this.draw_bone(context,joints, ['nose', 'r_eye', 'r_ear']);
+        this.draw_bone(context,joints, ['r_shoulder', 'r_hip', 'l_hip']);
+        this.draw_bone(context,joints, ['nose', 'neck']);
+      }).catch(err=>{
+       console.log(err)
+       return})
+    },
+    draw_bone: function(ctx,joints, list) {
+      let prev_name = list.shift();
+      let next_name = '';
 
-      context.drawImage(image, 0, 0);
-      // test
-      context.fillRect(25,25,100,100)
+      if (joints[prev_name][2] > 0) {
+          // Draw First vertex
+          ctx.beginPath();
+          ctx.arc(joints[prev_name][0], joints[prev_name][1], VERTEX_POINT_RADIUS, 0, 2 * Math.PI);
+          ctx.fill();
 
-      const file = canvas.toDataURL("image/jpeg");
-      
+      }
+      while ((next_name = list.shift()) != null) {
+       let prev_joint = joints[prev_name];
+       let next_joint = joints[next_name];
+
+       if (next_joint[2] > this.threshold) {
+           // Draw next vertices
+           ctx.beginPath();
+           ctx.arc(next_joint[0], next_joint[1], VERTEX_POINT_RADIUS, 0, 2 * Math.PI);
+           ctx.fill();
+       }
+       if (prev_joint[2] > 0 && next_joint[2] > 0) {
+           // Draw lines
+           ctx.beginPath();
+           ctx.moveTo(prev_joint[0], prev_joint[1]);
+           ctx.lineTo(next_joint[0], next_joint[1]);
+           ctx.stroke();
+       }
+       prev_name = next_name;
+      }
     },
     imageLoaded:function(){
     },
@@ -508,6 +594,18 @@ export default {
           } else {
             console.log("getSignedUrl success: " + signedUrl);
             self.analysisImage[which].url = signedUrl;
+            if (which ==0){
+              self.image1.url=signedUrl
+              self.image1.onload = function() {
+                self.context1.drawImage(self.image1, 0, 0,800,600);
+              }
+            }else{
+              //self.image2.url=signedUrl
+              self.image2.url="/bone-test.jpg"
+              self.image2.onload = function() {
+                self.context2.drawImage(self.image2, 0, 0,800,600);
+              }
+            }
           }
         }
       );
