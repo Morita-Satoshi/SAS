@@ -1,53 +1,53 @@
 <template>
-<div v-if="isPrepare">
-  <html>
-    <div class="column">
-      <chart :score="score" :date="date"></chart>
-    </div>
-    <body>
-      <div id="app"></div>
-      <!-- built files willu be auto injected -->
-    </body>
-    <div>
-      <table border="2">
-        <thead>
-          <tr>
-            <th>日付</th>
-            <th>フォーム</th>
-            <th>コメント</th>
-            <th>点数</th>
-          </tr>
-        </thead>
+  <div v-if="isPrepare">
+    <html>
+      <div class="column">
+        <chart :score="score" :date="date"></chart>
+      </div>
+      <body>
+        <div id="app"></div>
+        <!-- built files willu be auto injected -->
+      </body>
+      <div>
+        <table border="2">
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>フォーム</th>
+              <th>コメント</th>
+              <th>点数</th>
+            </tr>
+          </thead>
 
-        <tbody>
-          <tr v-for="row in this.Items">
-            <td>{{row.date}}</td>
-            <td>
-              <div v-if="row.motion==1">
-                <img :src="displayImages[0].tab" class="resize-for-mobile" />
-              </div>
-              <div v-else-if="row.motion==2">
-                <img :src="displayImages[1].tab" class="resize-for-mobile" />
-              </div>
-              <div v-else-if="row.motion==3">
-                <img :src="displayImages[2].tab" class="resize-for-mobile" />
-              </div>
-              <div v-else-if="row.motion==4">
-                <img :src="displayImages[3].tab" class="resize-for-mobile" />
-              </div>
-              <div v-else-if="row.motion==5">
-                <img :src="displayImages[4].tab" class="resize-for-mobile" />
-              </div>
-              <div v-else></div>
-            </td>
-            <td>{{row.comment}}</td>
-            <td>{{row.score}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </html>
-</div>
+          <tbody>
+            <tr v-for="row in this.Items">
+              <td>{{ row.date }}</td>
+              <td>
+                <div v-if="row.motion == 1">
+                  <img :src="displayImages[0].tab" class="resize-for-mobile" />
+                </div>
+                <div v-else-if="row.motion == 2">
+                  <img :src="displayImages[1].tab" class="resize-for-mobile" />
+                </div>
+                <div v-else-if="row.motion == 3">
+                  <img :src="displayImages[2].tab" class="resize-for-mobile" />
+                </div>
+                <div v-else-if="row.motion == 4">
+                  <img :src="displayImages[3].tab" class="resize-for-mobile" />
+                </div>
+                <div v-else-if="row.motion == 5">
+                  <img :src="displayImages[4].tab" class="resize-for-mobile" />
+                </div>
+                <div v-else></div>
+              </td>
+              <td>{{ row.comment }}</td>
+              <td>{{ row.score }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </html>
+  </div>
 </template>
 
 <script>
@@ -55,7 +55,7 @@ import api from "../store/api.js";
 import Chart from "../components/Chart";
 export default {
   components: {
-    Chart
+    Chart,
   },
   mounted() {},
   created() {
@@ -76,13 +76,13 @@ export default {
         { tab: "/study_tab_2.jpg", contents: "/study_contents_2.jpg" },
         { tab: "/study_tab_3.jpg", contents: "/study_contents_3.jpg" },
         { tab: "/study_tab_4.jpg", contents: "/study_contents_4.jpg" },
-        { tab: "/study_tab_5.jpg", contents: "/study_contents_5.jpg" }
-      ]
+        { tab: "/study_tab_5.jpg", contents: "/study_contents_5.jpg" },
+      ],
     };
   },
   methods: {
-    getSelfEvaluate: function() {
-      api.get("/user/self-evaluate").then(resp => {
+    getSelfEvaluate: function () {
+      api.get("/user/self-evaluate").then((resp) => {
         var tmpScoreArray = [];
         var tmpDateArray = [];
         var tmpCommentArray = [];
@@ -98,7 +98,7 @@ export default {
             date: convertDate,
             comment: resp.data[i].comment,
             score: resp.data[i].score,
-            motion: resp.data[i].motion
+            motion: resp.data[i].motion,
           });
         }
         this.motion = tmpMotionArray;
@@ -115,7 +115,7 @@ export default {
       var month = dateTime.getMonth() + 1;
       var date = dateTime.getDate();
       return month + "/" + date;
-    }
-  }
+    },
+  },
 };
 </script>

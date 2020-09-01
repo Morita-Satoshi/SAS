@@ -1,8 +1,22 @@
 <template>
-  <v-app v-if="ready">
-    <v-navigation-drawer v-model="drawer" :mini-variant="miniVariant" :clipped="clipped" fixed app>
+  <v-app background="#AFBFD6" v-if="ready">
+    <v-navigation-drawer
+      v-model="drawer"
+      :mini-variant="miniVariant"
+      :clipped="clipped"
+      fixed
+      app
+      color="#4D5CB2"
+      dark
+    >
       <v-list>
-        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
+        <v-list-item
+          v-for="(item, i) in items"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+        >
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -12,7 +26,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app>
+    <v-app-bar color="#4D5CB2" dark :clipped-left="clipped" fixed app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
@@ -49,38 +63,38 @@ export default {
         {
           icon: "mdi-apps",
           title: "TOP",
-          to: "/"
+          to: "/",
         },
         {
           icon: "mdi-baseball",
           title: "比べてみよう",
-          to: "/compare"
+          to: "/compare",
         },
         {
           icon: "mdi-cloud-upload",
           title: "記録しよう",
-          to: "/upload"
+          to: "/upload",
         },
         {
           icon: "mdi-notebook",
           title: "勉強しよう",
-          to: "/study"
+          to: "/study",
         },
         {
           icon: "mdi-apps",
           title: "振り返り",
-          to: "/dashboard"
+          to: "/dashboard",
         },
-        {
-          icon: "mdi-apps",
-          title: "自分を知ろう",
-          to: "/knowyourself"
-        }
+        // {
+        //   icon: "mdi-apps",
+        //   title: "自分を知ろう",
+        //   to: "/knowyourself",
+        // },
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: "子どものぼ～る"
+      title: "子どものぼ～る",
     };
   },
   created() {
@@ -98,14 +112,14 @@ export default {
     }
   },
   methods: {
-    onOpenlogoutDialog: async function(item) {
+    onOpenlogoutDialog: async function (item) {
       if (await this.$refs.logoutDialog.open(item)) {
         this.$router.push("/login");
       }
     },
-    refresh: function() {
+    refresh: function () {
       location.reload();
-    }
-  }
+    },
+  },
 };
 </script>

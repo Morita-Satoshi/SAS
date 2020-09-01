@@ -12,11 +12,13 @@
           playsinline
           controls
         ></video>
-        <div>
+        <v-row justify="center">
+          <v-col cols="12" sm="6">
           <select
-            style="border: 2px solid blue"
+            class="cp_ipselect cp_sl04"
             v-model="selected.movie1"
             @change="getMovie($event, 0)"
+            label="動画1"
           >
             <option disabled value>{{message.selectMovie1}}</option>
             <option
@@ -25,7 +27,8 @@
               :value="item.movieName"
             >{{item.movieName}}</option>
           </select>
-        </div>
+          </v-col>
+        </v-row>
       </div>
       <!-- 1つ目のMovieの表示領域 [E] -->
       <!-- 2つ目のMovieの表示領域 [S] -->
@@ -40,8 +43,10 @@
           controls
         ></video>
         <div>
+        <v-row justify="center">
+          <v-col cols="12" sm="6">
           <select
-            style="border: 2px solid blue"
+            class="cp_ipselect cp_sl04"
             v-model="selected.movie2"
             @change="getMovie($event, 1)"
           >
@@ -52,6 +57,8 @@
               :value="item.movieName"
             >{{item.movieName}}</option>
           </select>
+          </v-col>
+        </v-row>
         </div>
       </div>
       <!-- 2つ目のMovieの表示領域 [E] -->
@@ -71,7 +78,7 @@
       <!-- 採点パート -->
       <div class="align-center">
         <v-subheader>どの部分に関しての感想か選ぼう</v-subheader>
-        <v-row>
+        <v-row justify="center">
           <v-col cols="2">
             <v-card v-on:click="motion=1;setAnalysisImage(1)" height="100%">
               <v-img :src="displayImages[0].tab" class="resize-for-mobile" />
@@ -99,7 +106,7 @@
           </v-col>
         </v-row>
         <!-- フォームの切り出しを表示 -->
-        <v-row>
+        <v-row justify>
         <v-col cols="6" v-if="analysisImage[0].url != null">
           <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[0].score)+"点"}} </p>
           <v-img id="sceneImage0" :src="analysisImage[0].url"/>
@@ -126,7 +133,7 @@
         <!-- 差分で得点を表示 -->
         </div>
         <v-card-text>
-          <v-row>
+          <v-row justify>
             <v-col cols="12" md="6" class="pr-4">
               <v-text-field label="自分が思った得点を入力しよう" type="number" v-model="userScore" />
               </v-text-field>
@@ -221,11 +228,11 @@ export default {
       motion: 0,
       userScore :0,
       displayImages: [
-        { tab: "/study_tab_1.jpg", contents: "/study_contents_1.jpg" },
-        { tab: "/study_tab_2.jpg", contents: "/study_contents_2.jpg" },
-        { tab: "/study_tab_3.jpg", contents: "/study_contents_3.jpg" },
-        { tab: "/study_tab_4.jpg", contents: "/study_contents_4.jpg" },
-        { tab: "/study_tab_5.jpg", contents: "/study_contents_5.jpg" }
+        { tab: "/scene_1.jpg" },
+        { tab: "/scene_2.jpg" },
+        { tab: "/scene_3.jpg" },
+        { tab: "/scene_4.jpg" },
+        { tab: "/scene_5.jpg" }
       ]
     };
   },
@@ -660,5 +667,50 @@ img.resize-for-mobile {
   font-size: larger;
   color: blue;
 
+}
+.cp_ipselect {
+overflow: hidden;
+width: 90%;
+text-align: center;
+}
+.cp_ipselect select {
+width: 100%;
+padding-right: 1em;
+cursor: pointer;
+text-indent: 0.01px;
+text-overflow: ellipsis;
+border: none;
+outline: none;
+background: transparent;
+background-image: none;
+box-shadow: none;
+-webkit-appearance: none;
+appearance: none;
+}
+.cp_ipselect select::-ms-expand {
+display: none;
+}
+.cp_ipselect.cp_sl04 {
+position: relative;
+border-radius: 2px;
+border: 2px solid #C0C0C0;
+border-radius: 50px;
+background: #ffffff;
+}
+.cp_ipselect.cp_sl04::before {
+position: absolute;
+top: 0.8em;
+right: 0.8em;
+width: 0;
+height: 0;
+padding: 0;
+content: '';
+border-left: 6px solid transparent;
+border-right: 6px solid transparent;
+pointer-events: none;
+}
+.cp_ipselect.cp_sl04 select {
+padding: 8px 38px 8px 8px;
+color: #C0C0C0;
 }
 </style>
