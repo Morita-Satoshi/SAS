@@ -12,7 +12,7 @@
           playsinline
           controls
         ></video>
-        <v-row justify="center">
+        <v-row justify-center>
           <v-col cols="12" sm="6">
           <select
             class="cp_ipselect cp_sl04"
@@ -43,7 +43,7 @@
           controls
         ></video>
         <div>
-        <v-row justify="center">
+        <v-row justify-center>
           <v-col cols="12" sm="6">
           <select
             class="cp_ipselect cp_sl04"
@@ -65,7 +65,7 @@
       <!-- 再生/停止ボタン表示領域 [S] -->
       <div v-show="(movieData[0].url != null && movieData[1].url != null) == true">
         <button
-          type="button"
+          type="buttoncenter"
           class="v-btn v-btn--contained v-size--large theme-light"
           @click="playMovie"
         >{{message.playMovie}}</button>
@@ -78,7 +78,7 @@
       <!-- 採点パート -->
       <div class="align-center">
         <v-subheader>どの部分に関しての感想か選ぼう</v-subheader>
-        <v-row justify="center">
+        <v-row justify-center>
           <v-col cols="2">
             <v-card v-on:click="motion=1;setAnalysisImage(1)" height="100%">
               <v-img :src="displayImages[0].tab" class="resize-for-mobile" />
@@ -106,9 +106,9 @@
           </v-col>
         </v-row>
         <!-- フォームの切り出しを表示 -->
-        <v-row justify>
+        <v-row justify-center>
         <v-col cols="6" v-if="analysisImage[0].url != null">
-          <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[0].score)+"点"}} </p>
+          <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{Math.round(analysisImageAngle[0].score)+"点"}} </p>
           <v-img id="sceneImage0" :src="analysisImage[0].url"/>
           <p v-if="analysisImageAngle[0].angle !=null">{{backFormComment()+ Math.round(analysisImageAngle[0].angle) + "度"}} </p>
           <!-- 骨格表示ボタン -->
@@ -119,7 +119,7 @@
           >ほねをみよう</button> -->
         </v-col>
         <v-col cols="6" v-if="analysisImage[1].url != null">
-          <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{"フォームの点数は"+Math.round(analysisImageAngle[1].score)+"点"}} </p>
+          <p v-if="analysisImageAngle[0].angle !=null" class="score-charactor">{{Math.round(analysisImageAngle[1].score)+"点"}} </p>
           <v-img id="sceneImage1" :src="analysisImage[1].url"/>
           <p v-if="analysisImageAngle[1].angle !=null">{{backFormComment() + Math.round(analysisImageAngle[1].angle) + "度"}} </p>
           <!-- 骨格表示ボタン -->
@@ -133,7 +133,7 @@
         <!-- 差分で得点を表示 -->
         </div>
         <v-card-text>
-          <v-row justify>
+          <v-row justify-center>
             <v-col cols="12" md="6" class="pr-4">
               <v-text-field label="自分が思った得点を入力しよう" type="number" v-model="userScore" />
               </v-text-field>
@@ -662,6 +662,7 @@ img.resize-for-mobile {
   height: 60px;
 }
 .score-charactor{
+  font-size:40pt;
   text-align:center;
   font-weight: bold;
   font-size: larger;
